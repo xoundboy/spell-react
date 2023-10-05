@@ -25,35 +25,78 @@ export const playPageSlice = createSlice({
         newWord: (state) => {
             state.wordData = getNewWord();
             state.focusedIndex = 0;
-            state.wordCount++;
         },
         enterChar: (state, action) => {
+            if (state.focusedIndex < state.wordData.removedChars.length) {
+                const newEnteredChars = [...state.enteredChars];
+                newEnteredChars[state.focusedIndex] = action.payload;
+                state.enteredChars = newEnteredChars;
+                playPageSlice.caseReducers.focusNext(state)
+            }
+        },
+        deleteChar: state => {
+            if (state.focusedIndex === 0) {
+                return
+            }
+            const newEnteredChars = [...state.enteredChars];
+            newEnteredChars.splice(state.focusedIndex - 1, 1);
+            state.enteredChars = newEnteredChars;
+            playPageSlice.caseReducers.focusPrev(state)
+        },
+        tab: (state) => {
+            if (state.focusedIndex < state.wordData.removedChars.length) {
+                playPageSlice.caseReducers.focusNext(state)
+            }
+        },
+        tabBack: (state) => {
+            if (state.focusedIndex > 0) {
+                playPageSlice.caseReducers.focusPrev(state)
+            }
+        },
+        focusNext: state => {
+            if (state.focusedIndex === state.wordData.removedChars.length) {
+                return
+            }
+            state.focusedIndex++;
+        },
+        focusPrev: state => {
+            if (state.focusedIndex === 0) {
+                return
+            }
+            state.focusedIndex--;
+        },
+        submitWord: state => {
+            state.wordCount++;
 
+            let isCorrect = true;
+            if (state.enteredChars.length !== state.wordData.removedChars.length) {
+                isCorrect = false;
+            }
+            state.enteredChars.forEach((char, index) => {
+                if (char !== state.wordData.removedChars[index].char) {
+                    isCorrect = false;
+                }
+            });
+
+            if(isCorrect) {
+                state.score++
+            }
+
+            playPageSlice.caseReducers.newWord(state);
+            state.enteredChars = [];
+            state.focusedIndex = 0;
         },
 
-        deleteChar: state => {
-
-        }
-
-
-        // initNewWord: (state) => {
-        //     // Redux Toolkit allows us to write "mutating" logic in reducers. It
-        //     // doesn't actually mutate the state because it uses the Immer library,
-        //     // which detects changes to a "draft state" and produces a brand new
-        //     // immutable state based off those changes.
-        //     // Also, no return statement is required from these functions.
-        //     state.wordData = getNewWord();
-        // },
-        // decrement: (state) => {
-        //     state.value -= 1
-        // },
-        // incrementByAmount: (state, action) => {
-        //     state.value += action.payload
-        // },
     },
 })
 
-// Action creators are generated for each case reducer function
-export const { newWord, enterChar, deleteChar } = playPageSlice.actions
+export const {
+    newWord,
+    enterChar,
+    deleteChar,
+    tab,
+    tabBack,
+    submitWord
+} = playPageSlice.actions
 
 export default playPageSlice.reducer

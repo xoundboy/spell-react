@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { newWord } from '../playPageSlice';
+import { deleteChar, enterChar, newWord, tab, tabBack, submitWord } from '../playPageSlice';
 // import logo from './logo.svg';
 import Word, { wordData } from './Word';
 import '../App.css';
@@ -29,37 +29,21 @@ const StyledSubmitButton = styled.button`
 function App() {
     const dispatch = useDispatch()
     const wordData = useSelector((state: RootState) => state.playPage.wordData)
-
-
-    const [focusedIndex, _setFocusedIndex] = useState<number>(0);
-    const [score, setScore] = useState<number>(0);
-    const [wordCount, setWordCount] = useState<number>(0);
-    const [enteredChars, _setEnteredChars] = useState<string[]>(new Array(wordData.removedChars.length).fill(''));
-
-    const wordDataRef = useRef<wordData>(wordData);
-    const focusedIndexRef = useRef<number>(focusedIndex);
-    const enteredCharsRef = useRef<string[]>(enteredChars);
-
-    const setFocusedIndex = (data: number) => {
-        focusedIndexRef.current = data;
-        _setFocusedIndex(data);
-    }
-
-    const setEnteredChars = (data: string[]) => {
-        enteredCharsRef.current = data;
-        _setEnteredChars(data);
-    }
+    const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
+    const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
+    const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
+    const score = useSelector((state: RootState) => state.playPage.score)
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             switch (true) {
 
                 case event.key === "Backspace":
-                    deleteChar();
+                    dispatch(deleteChar());
                     break;
 
                 case event.key === "Enter":
-                    submitWord();
+                    dispatch(submitWord());
                     break;
 
                 case event.key === "Meta":
@@ -70,16 +54,14 @@ function App() {
                 case event.key === "Tab":
                     event.preventDefault();
                     if (event.shiftKey) {
-                        if (focusedIndexRef.current > 0) {
-                            focusPrev()
-                        }
-                    } else if (focusedIndexRef.current < wordData.removedChars.length) {
-                        focusNext()
+                        dispatch(tabBack())
+                    } else {
+                        dispatch(tab())
                     }
                     break;
 
                 case !!event.key.match(/[a-z]/i) :
-                    enterChar(event.key);
+                    dispatch(enterChar(event.key));
                     break;
 
                 default:
@@ -89,71 +71,17 @@ function App() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     });
 
-    const enterChar = (char: string) => {
-        if (focusedIndexRef.current < wordData.removedChars.length) {
-            const newEnteredChars = [...enteredCharsRef.current];
-            newEnteredChars[focusedIndexRef.current] = char;
-            setEnteredChars(newEnteredChars);
-            focusNext()
-        }
-    }
-
-    const deleteChar = () => {
-        if (focusedIndexRef.current === 0) {
-            return
-        }
-        const newEnteredChars = [...enteredCharsRef.current];
-        newEnteredChars.splice(focusedIndexRef.current - 1, 1);
-        setEnteredChars(newEnteredChars)
-        focusPrev()
-    }
-
-    const focusNext = () => {
-        setFocusedIndex(focusedIndexRef.current + 1);
-    }
-
-    const focusPrev = () => {
-        setFocusedIndex(focusedIndexRef.current - 1);
-    }
-
-    const isCorrectInput = () => {
-        let isCorrect = true;
-        if (enteredCharsRef.current.length !== wordDataRef.current.removedChars.length) {
-            isCorrect = false;
-        }
-        enteredCharsRef.current.forEach((char, index) => {
-            if (char !== wordDataRef.current.removedChars[index].char) {
-                isCorrect = false;
-            }
-        });
-        return isCorrect;
-    }
-
-    const submitWord = () => {
-        setWordCount(wordCount => wordCount + 1);
-        if(isCorrectInput()) {
-            setScore((score) => score + 1);
-        }
-        reset()
-    }
-
-    const reset = () => {
-        dispatch(newWord());
-        setEnteredChars([]);
-        setFocusedIndex( 0);
-    }
-
     return (
         <div className="App">
             <div className="score">Score: {score}</div>
             <div className="wordCount">Word Count: {wordCount}</div>
             <Word
                 wordWithUnderscores={wordData.wordWithUnderscores}
-                focusedIndex={focusedIndexRef.current}
+                focusedIndex={focusedIndex}
                 enteredChars={enteredChars}
             />
             <StyledSubmitButton
-                className={focusedIndexRef.current === wordData.removedChars.length ? "focused" : "" }
+                className={focusedIndex === wordData.removedChars.length ? "focused" : "" }
             >Submit</StyledSubmitButton>
         </div>
     );
