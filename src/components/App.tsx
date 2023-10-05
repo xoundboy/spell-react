@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+import { newWord } from '../playPageSlice';
 // import logo from './logo.svg';
 import Word, { wordData } from './Word';
 import '../App.css';
-import { getNewWord } from '../utils/stringManipulations';
+import type { RootState } from '../store'
+import { useSelector, useDispatch } from 'react-redux'
 
 const StyledSubmitButton = styled.button`
   text-align: center;
@@ -25,7 +27,10 @@ const StyledSubmitButton = styled.button`
 `;
 
 function App() {
-    const [wordData, _setWordData] = useState<wordData>(getNewWord())
+    const dispatch = useDispatch()
+    const wordData = useSelector((state: RootState) => state.playPage.wordData)
+
+
     const [focusedIndex, _setFocusedIndex] = useState<number>(0);
     const [score, setScore] = useState<number>(0);
     const [wordCount, setWordCount] = useState<number>(0);
@@ -34,11 +39,6 @@ function App() {
     const wordDataRef = useRef<wordData>(wordData);
     const focusedIndexRef = useRef<number>(focusedIndex);
     const enteredCharsRef = useRef<string[]>(enteredChars);
-
-    const setWordData = (data: wordData) => {
-        wordDataRef.current = data;
-        _setWordData(data);
-    }
 
     const setFocusedIndex = (data: number) => {
         focusedIndexRef.current = data;
@@ -79,12 +79,7 @@ function App() {
                     break;
 
                 case !!event.key.match(/[a-z]/i) :
-                    if (focusedIndexRef.current < wordData.removedChars.length) {
-                        const newEnteredChars = [...enteredCharsRef.current];
-                        newEnteredChars[focusedIndexRef.current] = event.key;
-                        setEnteredChars(newEnteredChars);
-                        focusNext()
-                    }
+                    enterChar(event.key);
                     break;
 
                 default:
@@ -93,6 +88,15 @@ function App() {
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     });
+
+    const enterChar = (char: string) => {
+        if (focusedIndexRef.current < wordData.removedChars.length) {
+            const newEnteredChars = [...enteredCharsRef.current];
+            newEnteredChars[focusedIndexRef.current] = char;
+            setEnteredChars(newEnteredChars);
+            focusNext()
+        }
+    }
 
     const deleteChar = () => {
         if (focusedIndexRef.current === 0) {
@@ -134,7 +138,7 @@ function App() {
     }
 
     const reset = () => {
-        setWordData(getNewWord());
+        dispatch(newWord());
         setEnteredChars([]);
         setFocusedIndex( 0);
     }
