@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { wordList } from './commonWords';
+import { wordList } from '../commonWords';
 // import logo from './logo.svg';
-import Word, { wordData } from './components/Word';
-import './App.css';
-import { prepareWord } from './utils/stringManipulations';
+import Word, { wordData } from './Word';
+import '../App.css';
+import { prepareWord } from '../utils/stringManipulations';
 
 const StyledSubmitButton = styled.button`
   text-align: center;
@@ -27,7 +27,6 @@ const StyledSubmitButton = styled.button`
 
 const getNewWord = () => prepareWord(wordList[Math.floor(Math.random() * wordList.length)])
 
-
 function App() {
     const [wordData, setWordData] = useState<wordData>(getNewWord())
     const enteredChars = useRef<string[]>([]);
@@ -40,6 +39,7 @@ function App() {
                 case event.key === "Backspace":
                     event.preventDefault();
                     if (focusedIndexRef.current === 0) return;
+                    enteredChars.current[focusedIndexRef.current - 1] = "";
                     setFocusedIndex(focusedIndexRef.current - 1);
                     break;
                 case event.key === "Enter":
@@ -76,11 +76,8 @@ function App() {
     }
 
     const onCharInput = (char: string, index: number) => {
-        console.log("char input", char, index)
         enteredChars.current[index] = char;
         setFocusedIndex(focusedIndexRef.current + 1);
-        console.log("enteredChars", enteredChars.current)
-        console.log("focus submit", focusedIndexRef.current === wordData.removedChars.length)
     }
 
     return (
