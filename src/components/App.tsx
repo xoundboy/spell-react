@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { wordList } from '../commonWords';
 // import logo from './logo.svg';
 import Word, { wordData } from './Word';
 import '../App.css';
-import { prepareWord } from '../utils/stringManipulations';
+import { getNewWord } from '../utils/stringManipulations';
 
 const StyledSubmitButton = styled.button`
   text-align: center;
@@ -25,13 +24,17 @@ const StyledSubmitButton = styled.button`
   }
 `;
 
-const getNewWord = () => prepareWord(wordList[Math.floor(Math.random() * wordList.length)])
-
 function App() {
-    const [wordData, setWordData] = useState<wordData>(getNewWord())
-    const enteredChars = useRef<string[]>([]);
+    const [wordData, _setWordData] = useState<wordData>(getNewWord())
     const [focusedIndex, _setFocusedIndex] = useState<number>(0);
+    const [score, _setScore] = useState<number>(0);
+    const [wordCount, _setWordCount] = useState<number>(0);
+
+    const enteredChars = useRef<string[]>([]);
+    const wordDataRef = useRef<wordData>(wordData);
     const focusedIndexRef = useRef(focusedIndex);
+    const scoreRef = useRef(score);
+    const wordCountRef = useRef(wordCount);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -43,8 +46,7 @@ function App() {
                     setFocusedIndex(focusedIndexRef.current - 1);
                     break;
                 case event.key === "Enter":
-                    // TODO submit the word
-                    console.log("submitting")
+                    submitWord();
                     break;
                 case event.key === "Meta":
                 case event.key === "Alt":
@@ -60,8 +62,11 @@ function App() {
                         setFocusedIndex(focusedIndexRef.current + 1);
                     }
                     break;
-                case (event.key.match(/[a-z]/i) && focusedIndexRef.current < wordData.wordWithUnderscores.length):
-                    onCharInput(event.key, focusedIndexRef.current);
+                case !!event.key.match(/[a-z]/i) :
+                    if (focusedIndexRef.current < wordData.removedChars.length) {
+                        enteredChars.current[focusedIndexRef.current] = event.key;
+                        setFocusedIndex(focusedIndexRef.current + 1);
+                    }
                     break;
                 default:
             }
@@ -70,18 +75,56 @@ function App() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
+    const setWordData = (newWord: wordData) => {
+        wordDataRef.current = newWord;
+        _setWordData(newWord);
+    }
+
     const setFocusedIndex = (newIndex: number) => {
         focusedIndexRef.current = newIndex;
         _setFocusedIndex(newIndex);
     }
 
-    const onCharInput = (char: string, index: number) => {
-        enteredChars.current[index] = char;
-        setFocusedIndex(focusedIndexRef.current + 1);
+    const setScore = (newScore: number) => {
+        scoreRef.current = newScore;
+        _setScore(newScore);
+    }
+
+    const setWordCount = (newWordCount: number) => {
+        wordCountRef.current = newWordCount;
+        _setWordCount(newWordCount);
+    }
+
+    const submitWord = () => {
+        let isCorrect = true;
+        enteredChars.current.forEach((char, index) => {
+            if (char !== wordDataRef.current.removedChars[index].char) {
+                isCorrect = false;
+            }
+        });
+
+        setWordCount(wordCountRef.current + 1);
+        if(isCorrect) {
+            setScore(scoreRef.current + 1);
+        } else {
+            console.log('incorrect')
+            console.log('word: ', wordDataRef.current.inputWord)
+            console.log('entered chars: ', enteredChars.current)
+            console.log('removed chars: ', wordDataRef.current.removedChars)
+        }
+        reset()
+    }
+
+    const reset = () => {
+        setWordData(getNewWord());
+        enteredChars.current = [];
+        setFocusedIndex(0);
     }
 
     return (
         <div className="App">
+            <div className="score">Score: {score}</div>
+            <div className="wordCount">Word Count: {wordCount}</div>
             <Word
                 wordWithUnderscores={wordData.wordWithUnderscores}
                 focusedIndex={focusedIndex}
@@ -89,9 +132,6 @@ function App() {
             />
             <StyledSubmitButton
                 className={focusedIndexRef.current === wordData.removedChars.length ? "focused" : "" }
-                onClick={(event) =>{
-                    console.log("submitting")
-                }}
             >Submit</StyledSubmitButton>
         </div>
     );

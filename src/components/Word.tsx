@@ -39,7 +39,6 @@ const Word = (props:WordProps) => {
     let currentBlankIndex = -1;
     return (
         <>{
-
             props.wordWithUnderscores.split('').map((char, index) => {
                 if(char === "_" ) {
                     currentBlankIndex++;
