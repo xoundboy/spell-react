@@ -15,9 +15,10 @@ const StyledSubmitButton = styled.button`
   background-color: #444649;
   color: #777777;
   outline: rgb(124, 124, 124) 3px solid;
-  margin: 20px 4px;
+  margin: 20px auto;
+  display: block; 
 
-  &:focus {
+  &.focused {
     outline: 3px solid green;
     background-color: rgb(52, 89, 35);
     color: #ff9901;
@@ -28,61 +29,73 @@ const getNewWord = () => prepareWord(wordList[Math.floor(Math.random() * wordLis
 
 
 function App() {
-    const removedCharRefs = useRef<Array<HTMLInputElement | undefined>>([]);
-    const submitButtonRef = useRef<HTMLButtonElement>(null);
-    const [focusedIndex, _setFocusedIndex] = useState<number | null>(0);
-    const [wordData, setWordData] = useState<wordData>(getNewWord());
+    const [wordData, setWordData] = useState<wordData>(getNewWord())
+    const enteredChars = useRef<string[]>([]);
+    const [focusedIndex, _setFocusedIndex] = useState<number>(0);
     const focusedIndexRef = useRef(focusedIndex);
 
-    const setFocusedIndex = (newIndex: number | null) => {
-        focusedIndexRef.current = newIndex;
-        _setFocusedIndex(newIndex);
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Backspace") {
-            if (!focusedIndexRef.current) {
-                setFocusedIndex(removedCharRefs.current.length);
-                return;
-            }
-            if (focusedIndexRef.current > 0) {
-                console.log(focusedIndexRef.current)
-            }
-        }
-    }
-
     useEffect(() => {
-        removedCharRefs.current[0]?.focus();
+        const handleKeyDown = (event: KeyboardEvent) => {
+            switch (true) {
+                case event.key === "Backspace":
+                    event.preventDefault();
+                    if (focusedIndexRef.current === 0) return;
+                    setFocusedIndex(focusedIndexRef.current - 1);
+                    break;
+                case event.key === "Enter":
+                    // TODO submit the word
+                    console.log("submitting")
+                    break;
+                case event.key === "Meta":
+                case event.key === "Alt":
+                case event.key === "Shift":
+                    break;
+                case event.key === "Tab":
+                    event.preventDefault();
+                    if (event.shiftKey) {
+                        if (focusedIndexRef.current > 0) {
+                            setFocusedIndex(focusedIndexRef.current - 1);
+                        }
+                    } else {
+                        setFocusedIndex(focusedIndexRef.current + 1);
+                    }
+                    break;
+                case (event.key.match(/[a-z]/i) && focusedIndexRef.current < wordData.wordWithUnderscores.length):
+                    onCharInput(event.key, focusedIndexRef.current);
+                    break;
+                default:
+            }
+        };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     }, []);
 
-    useEffect(() => {
-        removedCharRefs.current[focusedIndexRef.current]?.focus();
-        console.log('new focus index',focusedIndex)
-    }, [focusedIndex]);
+    const setFocusedIndex = (newIndex: number) => {
+        focusedIndexRef.current = newIndex;
+        _setFocusedIndex(newIndex);
+    }
 
     const onCharInput = (char: string, index: number) => {
-        if (char === "") return;
-        console.log("char input", char === "" ? "empty" : char, index)
-        if (removedCharRefs.current[index + 1]) {
-            setFocusedIndex(focusedIndexRef.current + 1);
-        } else {
-            setFocusedIndex(null);
-            submitButtonRef.current?.focus();
-        }
+        console.log("char input", char, index)
+        enteredChars.current[index] = char;
+        setFocusedIndex(focusedIndexRef.current + 1);
+        console.log("enteredChars", enteredChars.current)
+        console.log("focus submit", focusedIndexRef.current === wordData.removedChars.length)
     }
 
     return (
         <div className="App">
             <Word
                 wordWithUnderscores={wordData.wordWithUnderscores}
-                removedCharRefs={removedCharRefs}
-                onCharInput={onCharInput}
+                focusedIndex={focusedIndex}
+                enteredChars={enteredChars.current}
             />
-            <StyledSubmitButton ref={submitButtonRef} onClick={(event) =>{
-                console.log("submitting")
-            }}>Submit</StyledSubmitButton>
+            <StyledSubmitButton
+                className={focusedIndexRef.current === wordData.removedChars.length ? "focused" : "" }
+                onClick={(event) =>{
+                    console.log("submitting")
+                }}
+            >Submit</StyledSubmitButton>
         </div>
     );
 }

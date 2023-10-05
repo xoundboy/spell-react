@@ -27,8 +27,7 @@ export const prepareWord = (inputWord: string): wordData => {
     return {
         inputWord: inputWord,
         wordWithUnderscores: modifiedWord,
-        removedChars: removedChars,
-        attempt: modifiedWord
+        removedChars: removedChars
     };
 }
 
