@@ -26,11 +26,6 @@ function PlayPage() {
                 case event.key === "Enter":
                     dispatch(submitWord());
                     break;
-                //
-                // case event.key === "Meta":
-                // case event.key === "Alt":
-                // case event.key === "Shift":
-                //     break;
 
                 case event.key === "Tab":
                     event.preventDefault();
