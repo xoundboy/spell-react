@@ -43,10 +43,7 @@ const Word = () => {
                     return <CharInputField
                         className={className}
                         key={index}
-                        onClick={() => {
-                            dispatch(focusIndex(currentBlankIndex));
-                            console.log("clicked on blank index", currentBlankIndex);
-                        }}
+                        onClick={() => dispatch(focusIndex(currentBlankIndex))}
                     >{enteredChars[currentBlankIndex] || "_"}</CharInputField>
                 } else {
                     return <CharSpan key={index}>{char}</CharSpan>
