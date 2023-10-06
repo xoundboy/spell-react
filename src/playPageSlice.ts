@@ -71,21 +71,12 @@ export const playPageSlice = createSlice({
         },
         submitWord: state => {
             state.wordCount++;
-
             let isCorrect = true;
-            if (state.enteredChars.length !== state.wordData.removedChars.length) {
-                isCorrect = false;
-            }
+            if (state.enteredChars.length !== state.wordData.removedChars.length) isCorrect = false;
             state.enteredChars.forEach((char, index) => {
-                if (char !== state.wordData.removedChars[index].char) {
-                    isCorrect = false;
-                }
+                if (char !== state.wordData.removedChars[index].char) isCorrect = false;
             });
-
-            if(isCorrect) {
-                state.score++
-            }
-
+            if (isCorrect) state.score++;
             playPageSlice.caseReducers.newWord(state);
             state.enteredChars = [];
             state.focusedIndex = 0;
