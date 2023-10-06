@@ -1,6 +1,11 @@
 import { wordList } from '../commonWords';
 import { config } from '../config';
-import { wordData } from '../components/Word';
+
+export type wordData = {
+    inputWord: string,
+    wordWithUnderscores: string,
+    removedChars: Array<{ char: string, index: number }>
+}
 
 type CharToRemove = {
     char: string,

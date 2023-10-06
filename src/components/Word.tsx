@@ -1,13 +1,10 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-
-export type wordData = {
-    inputWord: string,
-    wordWithUnderscores: string,
-    removedChars: Array<{ char: string, index: number }>
-}
+import { RootState } from '../store';
 
 const CharSpan = styled.span`
+  color: #9b7e5f;
   font-size: 80px;
   font-family: monospace, bold;
 `;
@@ -17,7 +14,7 @@ const CharInputField = styled.div`
   text-align: center;
   border: 1px;
   border-radius: 9px;
-  color: #a66001;
+  color: #d97d01;
   font-size: 80px;
   font-family: monospace, bold;
   display: inline-block;
@@ -29,24 +26,22 @@ const CharInputField = styled.div`
   }
 `;
 
-export interface WordProps {
-    wordWithUnderscores: string,
-    focusedIndex: number,
-    enteredChars: string[],
-}
+const Word = () => {
+    const wordWithUnderscores = useSelector((state: RootState) => state.playPage.wordData).wordWithUnderscores
+    const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
+    const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
 
-const Word = (props:WordProps) => {
     let currentBlankIndex = -1;
     return (
         <>{
-            props.wordWithUnderscores.split('').map((char, index) => {
+            wordWithUnderscores.split('').map((char, index) => {
                 if(char === "_" ) {
                     currentBlankIndex++;
-                    const className = `singleCharacter focusable ${props.focusedIndex === currentBlankIndex ? 'focused' : ''}`;
+                    const className = `singleCharacter focusable ${focusedIndex === currentBlankIndex ? 'focused' : ''}`;
                     return <CharInputField
                         className={className}
                         key={index}
-                    >{props.enteredChars[currentBlankIndex] || "_"}</CharInputField>
+                    >{enteredChars[currentBlankIndex] || "_"}</CharInputField>
                 } else {
                     return <CharSpan key={index}>{char}</CharSpan>
                 }

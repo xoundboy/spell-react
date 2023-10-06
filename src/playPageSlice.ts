@@ -1,6 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { wordData } from './components/Word';
-import { getNewWord } from './utils/stringManipulations';
+import { getNewWord, wordData } from './utils/getNewWord';
 
 export interface PlayPageState {
     wordData: wordData,
