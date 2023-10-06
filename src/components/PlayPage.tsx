@@ -26,11 +26,11 @@ function PlayPage() {
                 case event.key === "Enter":
                     dispatch(submitWord());
                     break;
-
-                case event.key === "Meta":
-                case event.key === "Alt":
-                case event.key === "Shift":
-                    break;
+                //
+                // case event.key === "Meta":
+                // case event.key === "Alt":
+                // case event.key === "Shift":
+                //     break;
 
                 case event.key === "Tab":
                     event.preventDefault();
@@ -39,6 +39,9 @@ function PlayPage() {
                     } else {
                         dispatch(tab())
                     }
+                    break;
+
+                case event.key.length > 1:
                     break;
 
                 case !!event.key.match(/[a-z]/i) :
