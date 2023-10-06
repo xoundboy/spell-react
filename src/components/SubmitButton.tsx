@@ -1,6 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { submitWord } from '../playPageSlice';
 import { RootState } from '../store';
 
 const StyledSubmitButton = styled.button`
@@ -23,12 +24,14 @@ const StyledSubmitButton = styled.button`
 `;
 
 const SubmitButton = () => {
+    const dispatch = useDispatch();
     const removedChars = useSelector((state: RootState) => state.playPage.wordData).removedChars
     const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
 
     return (
         <StyledSubmitButton
             className={focusedIndex === removedChars.length ? "focused" : "" }
+            onClick={() => dispatch(submitWord())}
         >Submit
         </StyledSubmitButton>
     )

@@ -1,6 +1,7 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { focusIndex } from '../playPageSlice';
 import { RootState } from '../store';
 
 const CharSpan = styled.span`
@@ -27,6 +28,7 @@ const CharInputField = styled.div`
 `;
 
 const Word = () => {
+    const dispatch = useDispatch();
     const wordWithUnderscores = useSelector((state: RootState) => state.playPage.wordData).wordWithUnderscores
     const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
@@ -41,6 +43,10 @@ const Word = () => {
                     return <CharInputField
                         className={className}
                         key={index}
+                        onClick={() => {
+                            dispatch(focusIndex(currentBlankIndex));
+                            console.log("clicked on blank index", currentBlankIndex);
+                        }}
                     >{enteredChars[currentBlankIndex] || "_"}</CharInputField>
                 } else {
                     return <CharSpan key={index}>{char}</CharSpan>

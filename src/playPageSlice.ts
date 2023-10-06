@@ -64,6 +64,11 @@ export const playPageSlice = createSlice({
             }
             state.focusedIndex--;
         },
+        focusIndex: (state, action) => {
+            if (action.payload >= 0 && action.payload <= state.wordData.removedChars.length) {
+                state.focusedIndex = action.payload;
+            }
+        },
         submitWord: state => {
             state.wordCount++;
 
@@ -90,12 +95,12 @@ export const playPageSlice = createSlice({
 })
 
 export const {
-    newWord,
     enterChar,
     deleteChar,
     tab,
     tabBack,
-    submitWord
+    submitWord,
+    focusIndex
 } = playPageSlice.actions
 
 export default playPageSlice.reducer
