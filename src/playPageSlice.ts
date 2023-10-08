@@ -28,7 +28,6 @@ export const playPageSlice = createSlice({
     initialState: initialState,
     reducers: {
         newWord: (state) => {
-            const newWord = new Word();
             state.wordData = new Word().wordData;
             state.enteredChars = [];
             state.focusedIndex = 0;

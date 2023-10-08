@@ -10,6 +10,13 @@ const Score = styled.div`
   padding: 40px;
 `;
 
+const CountDown = styled.div`
+  background-color: #63078d;
+  width: 300px;
+  margin: 0 auto 40px;
+  height: 20px;
+`;
+
 const Stats = () => {
     const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
     const score = useSelector((state: RootState) => state.playPage.score)
@@ -18,7 +25,7 @@ const Stats = () => {
     return (
         <>
             <Score className="score">Score: {score}/{wordCount}</Score>
-            <div>{countDownPercentage}</div>
+            <CountDown style={{ width: `${countDownPercentage * 0.5}%` }}/>
         </>
     );
 }
