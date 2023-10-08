@@ -1,3 +1,4 @@
+
 export const wordList = [
     "a","abandon","ability","able","abortion","about","above","abroad","absence","absolute","absolutely","absorb","abuse",
     "academic","accept","access","accident","accompany","accomplish","according","account","accurate","accuse",

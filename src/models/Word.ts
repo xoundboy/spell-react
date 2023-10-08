@@ -6,6 +6,12 @@ type CharToRemove = {
     index: number
 }
 
+export type WordData = {
+    inputWord: string,
+    wordWithUnderscores: string,
+    removedChars: Array<{ char: string, index: number }>
+}
+
 class Word {
 
     public fullWord: string = "";
@@ -22,13 +28,20 @@ class Word {
         this.prepareWord();
     }
 
-    static validateEnteredChars(enteredChars: string[], removedChars: Array<CharToRemove>): boolean {
-        let isCorrect = true;
-        if (enteredChars.length !== removedChars.length) isCorrect = false;
-        enteredChars.forEach((char, index) => {
-            if (char !== removedChars[index].char) isCorrect = false;
+    static validateEnteredChars(enteredChars: string[], wordData: WordData): boolean {
+        if (enteredChars.length !== wordData.removedChars.length) return false;
+
+        // recreate entire word from entered chars
+        const rehydratedWord = wordData.wordWithUnderscores.split('');
+        wordData.wordWithUnderscores.split('').forEach((char: string, index: number) => {
+            if (char === '_') {
+                rehydratedWord[index] = enteredChars.shift() as string;
+            }
         });
-        return isCorrect;
+        const rehydratedWordString = rehydratedWord.join('');
+
+        // check if rehydrated word matches input word or if it otherwise exists in the word list
+        return rehydratedWord.join('') === wordData.inputWord || wordList.includes(rehydratedWordString);
     }
 
     private prepareWord() {
