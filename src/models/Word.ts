@@ -14,18 +14,24 @@ export type WordData = {
 
 class Word {
 
-    public fullWord: string = "";
-    public wordWithUnderscores: string = "";
-    public removedChars: Array<CharToRemove> = [];
+    public wordData: WordData;
 
+    #fullWord: string = "";
+    #wordWithUnderscores: string = "";
+    #removedChars: Array<CharToRemove> = [];
     #noOfCharsToRemove: number = 0;
 
     constructor() {
         while (this.#noOfCharsToRemove === 0) {
-            this.fullWord = wordList[Math.floor(Math.random() * wordList.length)];
-            this.#noOfCharsToRemove = Math.floor(this.fullWord.length / config.REMOVAL_RATIO);
+            this.#fullWord = wordList[Math.floor(Math.random() * wordList.length)];
+            this.#noOfCharsToRemove = Math.floor(this.#fullWord.length / config.REMOVAL_RATIO);
         }
         this.prepareWord();
+        this.wordData = {
+            inputWord: this.#fullWord,
+            wordWithUnderscores: this.#wordWithUnderscores,
+            removedChars: this.#removedChars
+        }
     }
 
     static validateEnteredChars(enteredChars: string[], wordData: WordData): boolean {
@@ -46,14 +52,14 @@ class Word {
 
     private prepareWord() {
         const removedChars : Array<CharToRemove> = [];
-        const randomIndices = this.chooseRemovalIndices(this.fullWord.length, this.#noOfCharsToRemove);
+        const randomIndices = this.chooseRemovalIndices(this.#fullWord.length, this.#noOfCharsToRemove);
         // sort the indices
         randomIndices.sort((a, b) => a - b);
-        let modifiedWord = this.fullWord;
+        let modifiedWord = this.#fullWord;
         // replace chars with underscores using random indices
         randomIndices.forEach(index => {
             const charToRemove: CharToRemove = {
-                char: this.fullWord.charAt(index),
+                char: this.#fullWord.charAt(index),
                 index: index
             }
             removedChars.push(charToRemove);
@@ -61,8 +67,8 @@ class Word {
             modifiedWord = this.setCharAt(modifiedWord, index, '_');
         });
 
-        this.wordWithUnderscores = modifiedWord;
-        this.removedChars = removedChars;
+        this.#wordWithUnderscores = modifiedWord;
+        this.#removedChars = removedChars;
     }
 
     private chooseRemovalIndices(wordLength: number, noOfIndices: number): number[] {

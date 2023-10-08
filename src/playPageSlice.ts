@@ -1,15 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
 import Word, { WordData } from './models/Word';
-const tempWord = {
-    inputWord: "hello",
-    wordWithUnderscores: "h_llo",
-    removedChars: [
-        {
-            char: "e",
-            index: 1
-        }
-    ]
-}
 
 export interface PlayPageState {
     wordData: WordData,
@@ -23,7 +13,7 @@ export interface PlayPageState {
 }
 
 const initialState: PlayPageState = {
-    wordData: tempWord,
+    wordData: new Word().wordData,
     focusedIndex: 0,
     score: 0,
     wordCount: 0,
@@ -39,11 +29,7 @@ export const playPageSlice = createSlice({
     reducers: {
         newWord: (state) => {
             const newWord = new Word();
-            state.wordData = {
-                inputWord: newWord.fullWord,
-                wordWithUnderscores: newWord.wordWithUnderscores,
-                removedChars: newWord.removedChars
-            };
+            state.wordData = new Word().wordData;
             state.enteredChars = [];
             state.focusedIndex = 0;
             playPageSlice.caseReducers.resetCounter(state);
