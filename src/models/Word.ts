@@ -41,7 +41,7 @@ class Word {
         const rehydratedWordString = rehydratedWord.join('');
 
         // check if rehydrated word matches input word or if it otherwise exists in the word list
-        return rehydratedWord.join('') === wordData.inputWord || wordList.includes(rehydratedWordString);
+        return rehydratedWordString === wordData.inputWord || wordList.includes(rehydratedWordString);
     }
 
     private prepareWord() {
