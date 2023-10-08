@@ -2,7 +2,13 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
-import { focusIndex, hideCorrectAnswerOverlay, startCountdown, updateCountdownPercentage } from '../playPageSlice';
+import {
+    focusIndex,
+    hideCorrectAnswerOverlay,
+    startCountdown,
+    switchPage,
+    updateCountdownPercentage
+} from '../playPageSlice';
 import { RootState } from '../store';
 import CorrectAnswer from './CorrectAnswer';
 
@@ -36,6 +42,7 @@ const Word = () => {
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
     const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
+    const isGameOver = useSelector((state: RootState) => state.playPage.isGameOver)
 
     let countdownIntervalRef  = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -61,6 +68,12 @@ const Word = () => {
             countdownIntervalRef.current && clearInterval(countdownIntervalRef.current);
         }
     }, [isCountingDown, dispatch]);
+
+    useEffect(() => {
+        if (isGameOver) {
+            dispatch(switchPage('results'));
+        }
+    }, [isGameOver]);
 
     let currentBlankIndex = -1;
     return (

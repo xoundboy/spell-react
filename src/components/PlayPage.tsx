@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { deleteChar, enterChar, submitWord, tab, tabBack } from '../playPageSlice';
+import { RootState } from '../store';
 import Stats from './Stats';
 import SubmitButton from './SubmitButton';
 import Word from './Word';
@@ -49,6 +50,8 @@ function PlayPage() {
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     });
+
+
 
     return (
         <StyledPage>

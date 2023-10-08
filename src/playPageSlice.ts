@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 import Word, { WordData } from './models/Word';
 
+type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'results' | 'settings' | 'highscores';
+
 export interface PlayPageState {
+    currentPage: CurrentPage,
     wordData: WordData,
     focusedIndex: number,
     score: number,
@@ -9,10 +12,14 @@ export interface PlayPageState {
     enteredChars: string[],
     showCorrectAnswer: boolean,
     isCountingDown: boolean,
-    countDownPercentage: number
+    countDownPercentage: number,
+    startTime: number,
+    totalTime: number,
+    isGameOver: boolean
 }
 
 const initialState: PlayPageState = {
+    currentPage: 'home',
     wordData: new Word().wordData,
     focusedIndex: 0,
     score: 0,
@@ -20,18 +27,42 @@ const initialState: PlayPageState = {
     enteredChars: [],
     showCorrectAnswer: false,
     isCountingDown: false,
-    countDownPercentage: 100
+    countDownPercentage: 100,
+    startTime: 0,
+    totalTime: 0,
+    isGameOver: false
 }
 
 export const playPageSlice = createSlice({
     name: 'playPage',
     initialState: initialState,
     reducers: {
+        switchPage: (state, action) => {
+            playPageSlice.caseReducers.resetCountdown(state);
+            state.currentPage = action.payload;
+            if (state.currentPage === 'playClassic30') {
+                state.isGameOver = false;
+                state.score = 0;
+                state.wordCount = 0;
+                state.startTime = Date.now();
+                playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
+            }
+        },
+        gameOver: (state) => {
+            state.totalTime = Date.now() - state.startTime;
+            state.isGameOver = true;
+            playPageSlice.caseReducers.resetCountdown(state);
+        },
         newWord: (state) => {
-            state.wordData = new Word().wordData;
-            state.enteredChars = [];
-            state.focusedIndex = 0;
-            playPageSlice.caseReducers.resetCounter(state);
+            if (state.currentPage === 'playClassic30' && state.wordCount === 3){
+                playPageSlice.caseReducers.gameOver(state);
+                return;
+            } else {
+                state.wordData = new Word().wordData;
+                state.enteredChars = [];
+                state.focusedIndex = 0;
+                playPageSlice.caseReducers.resetCountdown(state);
+            }
         },
         enterChar: (state, action) => {
             if (state.focusedIndex < state.wordData.removedChars.length) {
@@ -102,14 +133,16 @@ export const playPageSlice = createSlice({
                 state.showCorrectAnswer = true;
             }
         },
-        resetCounter: state => {
-            state.countDownPercentage = 100;
+        resetCountdown: state => {
             state.isCountingDown = false;
+            state.countDownPercentage = 100;
         }
     },
 })
 
 export const {
+    gameOver,
+    switchPage,
     enterChar,
     deleteChar,
     tab,
