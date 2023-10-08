@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { focusIndex } from '../playPageSlice';
+import { focusIndex, hideCorrectAnswerOverlay } from '../playPageSlice';
 import { RootState } from '../store';
+import CorrectAnswer from './CorrectAnswer';
 
 const CharSpan = styled.span`
   color: #9b7e5f;
@@ -32,11 +33,21 @@ const Word = () => {
     const wordWithUnderscores = useSelector((state: RootState) => state.playPage.wordData).wordWithUnderscores
     const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
+    const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
+
+    useEffect(() => {
+        if (showCorrectAnswer)  {
+            setTimeout(() => {
+                dispatch(hideCorrectAnswerOverlay())
+            }, 1000);
+        }
+    }, [showCorrectAnswer]);
 
     let currentBlankIndex = -1;
     return (
-        <>{
-            wordWithUnderscores.split('').map((char, index) => {
+        <>
+            {showCorrectAnswer && <CorrectAnswer />}
+            {wordWithUnderscores.split('').map((char, index) => {
                 if(char === "_" ) {
                     currentBlankIndex++;
                     const className = `singleCharacter focusable ${focusedIndex === currentBlankIndex ? 'focused' : ''}`;

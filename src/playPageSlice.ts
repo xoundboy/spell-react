@@ -6,7 +6,8 @@ export interface PlayPageState {
     focusedIndex: number,
     score: number,
     wordCount: number,
-    enteredChars: string[]
+    enteredChars: string[],
+    showCorrectAnswer: boolean
 }
 
 const initialState: PlayPageState = {
@@ -14,15 +15,17 @@ const initialState: PlayPageState = {
     focusedIndex: 0,
     score: 0,
     wordCount: 0,
-    enteredChars: []
+    enteredChars: [],
+    showCorrectAnswer: false
 }
 
 export const playPageSlice = createSlice({
-    name: 'counter',
+    name: 'playPage',
     initialState: initialState,
     reducers: {
         newWord: (state) => {
             state.wordData = getNewWord();
+            state.enteredChars = [];
             state.focusedIndex = 0;
         },
         enterChar: (state, action) => {
@@ -76,12 +79,19 @@ export const playPageSlice = createSlice({
             state.enteredChars.forEach((char, index) => {
                 if (char !== state.wordData.removedChars[index].char) isCorrect = false;
             });
-            if (isCorrect) state.score++;
-            playPageSlice.caseReducers.newWord(state);
-            state.enteredChars = [];
-            state.focusedIndex = 0;
-        },
+            if (isCorrect) {
+                state.score++;
+                playPageSlice.caseReducers.newWord(state);
 
+            } else {
+                state.showCorrectAnswer = true;
+            }
+
+        },
+        hideCorrectAnswerOverlay: state => {
+            state.showCorrectAnswer = false;
+            playPageSlice.caseReducers.newWord(state);
+        }
     },
 })
 
@@ -91,7 +101,8 @@ export const {
     tab,
     tabBack,
     submitWord,
-    focusIndex
+    focusIndex,
+    hideCorrectAnswerOverlay
 } = playPageSlice.actions
 
 export default playPageSlice.reducer
