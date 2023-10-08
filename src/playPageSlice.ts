@@ -1,8 +1,25 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { getNewWord, wordData } from './utils/getNewWord';
+import Word from './models/Word';
+const tempWord = {
+    inputWord: "hello",
+    wordWithUnderscores: "h_llo",
+    removedChars: [
+        {
+            char: "e",
+            index: 1
+        }
+    ]
+}
+
+
+export type WordData = {
+    inputWord: string,
+    wordWithUnderscores: string,
+    removedChars: Array<{ char: string, index: number }>
+}
 
 export interface PlayPageState {
-    wordData: wordData,
+    wordData: WordData,
     focusedIndex: number,
     score: number,
     wordCount: number,
@@ -13,7 +30,7 @@ export interface PlayPageState {
 }
 
 const initialState: PlayPageState = {
-    wordData: getNewWord(),
+    wordData: tempWord,
     focusedIndex: 0,
     score: 0,
     wordCount: 0,
@@ -28,7 +45,12 @@ export const playPageSlice = createSlice({
     initialState: initialState,
     reducers: {
         newWord: (state) => {
-            state.wordData = getNewWord();
+            const newWord = new Word();
+            state.wordData = {
+                inputWord: newWord.fullWord,
+                wordWithUnderscores: newWord.wordWithUnderscores,
+                removedChars: newWord.removedChars
+            };
             state.enteredChars = [];
             state.focusedIndex = 0;
             playPageSlice.caseReducers.resetCounter(state);
@@ -80,14 +102,9 @@ export const playPageSlice = createSlice({
         submitWord: state => {
             state.isCountingDown = false;
             state.wordCount++;
-            let isCorrect = true;
-            if (state.enteredChars.length !== state.wordData.removedChars.length) isCorrect = false;
-            state.enteredChars.forEach((char, index) => {
-                if (char !== state.wordData.removedChars[index].char) isCorrect = false;
-            });
-            if (isCorrect) {
+
+            if (Word.validateEnteredChars(state.enteredChars, state.wordData.removedChars)) {
                 state.score++;
-                // playPageSlice.caseReducers.resetCounter(state);
                 playPageSlice.caseReducers.newWord(state);
 
             } else {
@@ -99,7 +116,6 @@ export const playPageSlice = createSlice({
             playPageSlice.caseReducers.newWord(state);
         },
         startCountdown: state => {
-            console.log('startCountdown')
             state.isCountingDown = true;
         },
         updateCountdownPercentage: (state, action) => {

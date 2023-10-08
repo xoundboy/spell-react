@@ -37,10 +37,11 @@ const Word = () => {
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
     const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
 
+    let countdownIntervalRef  = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
     useEffect(() => {
         dispatch(startCountdown())
-        console.log(isCountingDown)
-    }, []);
+    });
 
     useEffect(() => {
         if (showCorrectAnswer)  {
@@ -48,18 +49,18 @@ const Word = () => {
                 dispatch(hideCorrectAnswerOverlay())
             }, 1000);
         }
-    }, [showCorrectAnswer]);
+    }, [showCorrectAnswer, dispatch]);
 
     useEffect(() => {
-        console.log('isCountingDown', isCountingDown)
         if (isCountingDown)  {
             const percentageReductionPerSecond = 100 / config.INITIAL_COUNTDOWN_SECONDS;
-            setInterval(() => {
-                console.log('update counter', percentageReductionPerSecond)
+            countdownIntervalRef.current = setInterval(() => {
                 dispatch(updateCountdownPercentage(percentageReductionPerSecond));
             }, 1000)
+        } else {
+            countdownIntervalRef.current && clearInterval(countdownIntervalRef.current);
         }
-    }, [isCountingDown]);
+    }, [isCountingDown, dispatch]);
 
     let currentBlankIndex = -1;
     return (
