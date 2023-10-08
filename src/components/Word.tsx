@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { focusIndex, hideCorrectAnswerOverlay } from '../playPageSlice';
+import { config } from '../config';
+import { focusIndex, hideCorrectAnswerOverlay, startCountdown, updateCountdownPercentage } from '../playPageSlice';
 import { RootState } from '../store';
 import CorrectAnswer from './CorrectAnswer';
 
@@ -34,6 +35,12 @@ const Word = () => {
     const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
+    const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
+
+    useEffect(() => {
+        dispatch(startCountdown())
+        console.log(isCountingDown)
+    }, []);
 
     useEffect(() => {
         if (showCorrectAnswer)  {
@@ -42,6 +49,17 @@ const Word = () => {
             }, 1000);
         }
     }, [showCorrectAnswer]);
+
+    useEffect(() => {
+        console.log('isCountingDown', isCountingDown)
+        if (isCountingDown)  {
+            const percentageReductionPerSecond = 100 / config.INITIAL_COUNTDOWN_SECONDS;
+            setInterval(() => {
+                console.log('update counter', percentageReductionPerSecond)
+                dispatch(updateCountdownPercentage(percentageReductionPerSecond));
+            }, 1000)
+        }
+    }, [isCountingDown]);
 
     let currentBlankIndex = -1;
     return (

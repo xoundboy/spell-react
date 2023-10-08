@@ -7,7 +7,9 @@ export interface PlayPageState {
     score: number,
     wordCount: number,
     enteredChars: string[],
-    showCorrectAnswer: boolean
+    showCorrectAnswer: boolean,
+    isCountingDown: boolean,
+    countDownPercentage: number
 }
 
 const initialState: PlayPageState = {
@@ -16,7 +18,9 @@ const initialState: PlayPageState = {
     score: 0,
     wordCount: 0,
     enteredChars: [],
-    showCorrectAnswer: false
+    showCorrectAnswer: false,
+    isCountingDown: false,
+    countDownPercentage: 100
 }
 
 export const playPageSlice = createSlice({
@@ -27,6 +31,7 @@ export const playPageSlice = createSlice({
             state.wordData = getNewWord();
             state.enteredChars = [];
             state.focusedIndex = 0;
+            playPageSlice.caseReducers.resetCounter(state);
         },
         enterChar: (state, action) => {
             if (state.focusedIndex < state.wordData.removedChars.length) {
@@ -73,6 +78,7 @@ export const playPageSlice = createSlice({
             }
         },
         submitWord: state => {
+            state.isCountingDown = false;
             state.wordCount++;
             let isCorrect = true;
             if (state.enteredChars.length !== state.wordData.removedChars.length) isCorrect = false;
@@ -81,16 +87,30 @@ export const playPageSlice = createSlice({
             });
             if (isCorrect) {
                 state.score++;
+                // playPageSlice.caseReducers.resetCounter(state);
                 playPageSlice.caseReducers.newWord(state);
 
             } else {
                 state.showCorrectAnswer = true;
             }
-
         },
         hideCorrectAnswerOverlay: state => {
             state.showCorrectAnswer = false;
             playPageSlice.caseReducers.newWord(state);
+        },
+        startCountdown: state => {
+            console.log('startCountdown')
+            state.isCountingDown = true;
+        },
+        updateCountdownPercentage: (state, action) => {
+            state.countDownPercentage -= action.payload;
+            if(state.countDownPercentage <= 0) {
+                state.showCorrectAnswer = true;
+            }
+        },
+        resetCounter: state => {
+            state.countDownPercentage = 100;
+            state.isCountingDown = false;
         }
     },
 })
@@ -102,7 +122,9 @@ export const {
     tabBack,
     submitWord,
     focusIndex,
-    hideCorrectAnswerOverlay
+    hideCorrectAnswerOverlay,
+    updateCountdownPercentage,
+    startCountdown
 } = playPageSlice.actions
 
 export default playPageSlice.reducer
