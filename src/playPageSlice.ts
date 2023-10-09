@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { config } from './config';
 import Word, { WordData } from './models/Word';
 
 type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'results' | 'settings' | 'highscores';
@@ -54,7 +55,7 @@ export const playPageSlice = createSlice({
             playPageSlice.caseReducers.resetCountdown(state);
         },
         newWord: (state) => {
-            if (state.currentPage === 'playClassic30' && state.wordCount === 3){
+            if (state.currentPage === 'playClassic30' && state.wordCount === config.WORDS_PER_GAME){
                 playPageSlice.caseReducers.gameOver(state);
                 return;
             } else {
