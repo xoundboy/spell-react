@@ -48,7 +48,7 @@ const Word = () => {
 
     useEffect(() => {
         dispatch(startCountdown())
-    });
+    }, []);
 
     useEffect(() => {
         if (showCorrectAnswer)  {

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { config } from './config';
+import { log } from './logger';
 import Word, { WordData } from './models/Word';
 
 type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'results' | 'settings' | 'highscores';
@@ -39,6 +40,7 @@ export const playPageSlice = createSlice({
     initialState: initialState,
     reducers: {
         switchPage: (state, action) => {
+            log('switchPage', action.payload)
             playPageSlice.caseReducers.resetCountdown(state);
             state.currentPage = action.payload;
             if (state.currentPage === 'playClassic30') {
@@ -50,22 +52,26 @@ export const playPageSlice = createSlice({
             }
         },
         gameOver: (state) => {
+            log('gameOver')
             state.totalTime = Date.now() - state.startTime;
             state.isGameOver = true;
             playPageSlice.caseReducers.resetCountdown(state);
         },
         newWord: (state) => {
+            log('newWord')
             if (state.currentPage === 'playClassic30' && state.wordCount === config.WORDS_PER_GAME){
                 playPageSlice.caseReducers.gameOver(state);
                 return;
             } else {
+                playPageSlice.caseReducers.resetCountdown(state);
                 state.wordData = new Word().wordData;
                 state.enteredChars = [];
                 state.focusedIndex = 0;
-                playPageSlice.caseReducers.resetCountdown(state);
+                playPageSlice.caseReducers.startCountdown(state);
             }
         },
         enterChar: (state, action) => {
+            console.log('enterChar', action.payload)
             if (state.focusedIndex < state.wordData.removedChars.length) {
                 const newEnteredChars = [...state.enteredChars];
                 newEnteredChars[state.focusedIndex] = action.payload;
@@ -110,22 +116,27 @@ export const playPageSlice = createSlice({
             }
         },
         submitWord: state => {
+            log('submitWord')
             state.isCountingDown = false;
             state.wordCount++;
 
             if (Word.validateEnteredChars(state.enteredChars, state.wordData)) {
+                log('correct')
                 state.score++;
                 playPageSlice.caseReducers.newWord(state);
 
             } else {
+                log('incorrect')
                 state.showCorrectAnswer = true;
             }
         },
         hideCorrectAnswerOverlay: state => {
+            log('hideCorrectAnswerOverlay')
             state.showCorrectAnswer = false;
             playPageSlice.caseReducers.newWord(state);
         },
         startCountdown: state => {
+            log('startCountdown')
             state.isCountingDown = true;
         },
         updateCountdownPercentage: (state, action) => {
@@ -135,6 +146,7 @@ export const playPageSlice = createSlice({
             }
         },
         resetCountdown: state => {
+            log('resetCountdown')
             state.isCountingDown = false;
             state.countDownPercentage = 100;
         }
