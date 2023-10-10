@@ -3,7 +3,7 @@ import { config } from './config';
 import { log } from './logger';
 import Word, { WordData } from './models/Word';
 
-type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'results' | 'settings' | 'highscores';
+type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'playSpeedUp' | 'results';
 
 export interface PlayPageState {
     currentPage: CurrentPage,
@@ -25,7 +25,7 @@ const initialState: PlayPageState = {
     wordData: new Word().wordData,
     focusedIndex: 0,
     score: 0,
-    wordCount: 0,
+    wordCount: -1,
     enteredChars: [],
     showCorrectAnswer: false,
     isCountingDown: false,
@@ -46,7 +46,7 @@ export const playPageSlice = createSlice({
             if (state.currentPage === 'playClassic30') {
                 state.isGameOver = false;
                 state.score = 0;
-                state.wordCount = 0;
+                state.wordCount = -1;
                 state.startTime = Date.now();
                 playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
             }
@@ -54,14 +54,13 @@ export const playPageSlice = createSlice({
         gameOver: (state) => {
             log('gameOver')
             state.totalTime = Date.now() - state.startTime;
-            state.isGameOver = true;
             playPageSlice.caseReducers.resetCountdown(state);
+            state.isGameOver = true;
         },
         newWord: (state) => {
             log('newWord')
-            if (state.currentPage === 'playClassic30' && state.wordCount === config.WORDS_PER_GAME){
+            if (state.currentPage === 'playClassic30' && state.wordCount === (config.WORDS_PER_GAME - 1)){
                 playPageSlice.caseReducers.gameOver(state);
-                return;
             } else {
                 playPageSlice.caseReducers.resetCountdown(state);
                 state.wordData = new Word().wordData;
@@ -69,6 +68,41 @@ export const playPageSlice = createSlice({
                 state.focusedIndex = 0;
                 playPageSlice.caseReducers.startCountdown(state);
             }
+            state.wordCount++;
+        },
+        submitWord: state => {
+            log('submitWord')
+            state.isCountingDown = false;
+
+            if (Word.validateEnteredChars(state.enteredChars, state.wordData)) {
+                log('correct')
+                state.score++;
+                playPageSlice.caseReducers.newWord(state);
+
+            } else {
+                log('incorrect')
+                state.showCorrectAnswer = true;
+            }
+        },
+        hideCorrectAnswerOverlay: state => {
+            log('hideCorrectAnswerOverlay')
+            state.showCorrectAnswer = false;
+            playPageSlice.caseReducers.newWord(state);
+        },
+        startCountdown: state => {
+            log('startCountdown')
+            state.isCountingDown = true;
+        },
+        updateCountdownPercentage: (state, action) => {
+            state.countDownPercentage -= action.payload;
+            if(state.countDownPercentage <= 0) {
+                state.showCorrectAnswer = true;
+            }
+        },
+        resetCountdown: state => {
+            log('resetCountdown')
+            state.isCountingDown = false;
+            state.countDownPercentage = 100;
         },
         enterChar: (state, action) => {
             log('enterChar', action.payload)
@@ -115,41 +149,6 @@ export const playPageSlice = createSlice({
                 state.focusedIndex = action.payload;
             }
         },
-        submitWord: state => {
-            log('submitWord')
-            state.isCountingDown = false;
-            state.wordCount++;
-
-            if (Word.validateEnteredChars(state.enteredChars, state.wordData)) {
-                log('correct')
-                state.score++;
-                playPageSlice.caseReducers.newWord(state);
-
-            } else {
-                log('incorrect')
-                state.showCorrectAnswer = true;
-            }
-        },
-        hideCorrectAnswerOverlay: state => {
-            log('hideCorrectAnswerOverlay')
-            state.showCorrectAnswer = false;
-            playPageSlice.caseReducers.newWord(state);
-        },
-        startCountdown: state => {
-            log('startCountdown')
-            state.isCountingDown = true;
-        },
-        updateCountdownPercentage: (state, action) => {
-            state.countDownPercentage -= action.payload;
-            if(state.countDownPercentage <= 0) {
-                state.showCorrectAnswer = true;
-            }
-        },
-        resetCountdown: state => {
-            log('resetCountdown')
-            state.isCountingDown = false;
-            state.countDownPercentage = 100;
-        }
     },
 })
 
