@@ -71,7 +71,7 @@ export const playPageSlice = createSlice({
             }
         },
         enterChar: (state, action) => {
-            console.log('enterChar', action.payload)
+            log('enterChar', action.payload)
             if (state.focusedIndex < state.wordData.removedChars.length) {
                 const newEnteredChars = [...state.enteredChars];
                 newEnteredChars[state.focusedIndex] = action.payload;

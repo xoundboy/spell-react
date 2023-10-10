@@ -30,7 +30,7 @@ const StyledButton = styled.button`
 `;
 
 const StyledH1 = styled.h1`
-  margin: 0px;
+  margin: 0;
 `;
 
 const StyledH2 = styled.h2`
