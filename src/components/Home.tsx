@@ -29,11 +29,21 @@ const StyledButton = styled.button`
     }
 `;
 
+const StyledH1 = styled.h1`
+  margin: 0px;
+`;
+
+const StyledH2 = styled.h2`
+  font-size: 24px;
+  margin: 0 0 50px;
+`;
+
 const Home = () => {
     const dispatch = useDispatch()
     return(
         <StyledMenuPage>
-            <h1>Spell It In!</h1>
+            <StyledH1>Spell It In!</StyledH1>
+            <StyledH2>A Spelling Game</StyledH2>
             <StyledButton onClick={() => dispatch(switchPage('playClassic30'))}>Classic 30</StyledButton>
             <StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>
             <StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>
