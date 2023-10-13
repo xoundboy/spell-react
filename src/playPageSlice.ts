@@ -1,12 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { config } from './config';
 import { log } from './logger';
+import ResultsStorage, { ScoreData } from './models/ResultsStorage';
 import Word, { WordData } from './models/Word';
 
 type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'playSpeedUp' | 'results';
+export type GameType = 'classic30' | 'wordSprint' | 'speedUp';
 
 export interface PlayPageState {
     currentPage: CurrentPage,
+    gameType: GameType,
     wordData: WordData,
     focusedIndex: number,
     score: number,
@@ -22,6 +25,7 @@ export interface PlayPageState {
 
 const initialState: PlayPageState = {
     currentPage: 'home',
+    gameType: 'classic30',
     wordData: new Word().wordData,
     focusedIndex: 0,
     score: 0,
@@ -43,23 +47,41 @@ export const playPageSlice = createSlice({
             log('switchPage', action.payload)
             playPageSlice.caseReducers.resetCountdown(state);
             state.currentPage = action.payload;
-            if (state.currentPage === 'playClassic30') {
-                state.isGameOver = false;
-                state.score = 0;
-                state.wordCount = -1;
-                state.startTime = Date.now();
-                playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
+
+            switch(state.currentPage) {
+                case 'playClassic30':
+                    state.gameType = 'classic30';
+                    state.isGameOver = false;
+                    state.score = 0;
+                    state.wordCount = 0;
+                    state.startTime = Date.now();
+                    playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
+                    break;
+                case 'playWordSprint':
+                    state.gameType = 'wordSprint';
+                    // TODO: implement
+                    break;
+                default:
+                    state.gameType = 'speedUp';
+                    // TODO: implement
             }
         },
         gameOver: (state) => {
             log('gameOver')
             state.totalTime = Date.now() - state.startTime;
             playPageSlice.caseReducers.resetCountdown(state);
+            const scoreData = new ScoreData(
+                state.gameType,
+                state.score,
+                state.wordCount,
+                state.totalTime);
+            console.log('ScoreData',scoreData)
+            ResultsStorage.getInstance().setScoreData(scoreData, state.gameType);
             state.isGameOver = true;
         },
         newWord: (state) => {
             log('newWord')
-            if (state.currentPage === 'playClassic30' && state.wordCount === (config.WORDS_PER_GAME - 1)){
+            if (state.currentPage === 'playClassic30' && state.wordCount === (config.WORDS_PER_GAME)){
                 playPageSlice.caseReducers.gameOver(state);
             } else {
                 playPageSlice.caseReducers.resetCountdown(state);
