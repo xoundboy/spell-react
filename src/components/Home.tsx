@@ -45,8 +45,8 @@ const Home = () => {
             <StyledH1>Spell It In!</StyledH1>
             <StyledH2>A Spelling Game</StyledH2>
             <StyledButton onClick={() => dispatch(switchPage('playClassic30'))}>Classic 30</StyledButton>
-            <StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>
-            <StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>
+            {/*<StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>*/}
+            {/*<StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>*/}
         </StyledMenuPage>
     );
 }

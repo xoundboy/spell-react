@@ -108,7 +108,11 @@ const mockScoreData: GameTypeScores = {
     speedUp: speedUpScores
 }
 
+// Use the prototype to access private methods
+const resultsStorageProto = Object.getPrototypeOf(ResultsStorage.getInstance());
+
 describe('ResultsStorage', () => {
+
     describe('constructor', () => {
         it('should initialize the localStorage key with empty data', () => {
             const expectedData = {
@@ -116,7 +120,7 @@ describe('ResultsStorage', () => {
                 wordSprint: [],
                 speedUp: []
             };
-            const actualData = ResultsStorage.getInstance().getData();
+            const actualData = resultsStorageProto.getData();
             expect(actualData).toEqual(expectedData);
         });
     })
@@ -125,14 +129,6 @@ describe('ResultsStorage', () => {
             jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => JSON.stringify(mockScoreData));
             jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { });
         })
-        describe('getHighScoresByGameType', () => {
-            it('should return the scores for the requested game type', () => {
-                const gameType = 'classic30'
-                const result = ResultsStorage.getInstance().getHighScoresByGameType(gameType)
-                expect(localStorage.getItem).toHaveBeenCalled();
-                expect(result).toEqual(classic30Scores)
-            });
-        });
         describe('setScoreData', () => {
             it('should get and set the high score data in local storage', () => {
                 // TODO: implement
@@ -142,14 +138,14 @@ describe('ResultsStorage', () => {
         describe('getModifiedScoreDataForGameType', () => {
             it('should add the score data if there are no scores', () => {
                 const expectedScores = [score30];
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(score30, []);
-                expect(actualData).toEqual(expectedScores);
+                const actualData = resultsStorageProto.getModifiedScoresForGameType(score30, []);
+                expect(actualData.highScoresForGameType).toEqual(expectedScores);
             });
             it('should not add the score data if not in the top 5', () => {
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(score22, classic30Scores);
-                expect(actualData).toEqual(classic30Scores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(score22, classic30Scores);
+                expect(actualData.highScoresForGameType).toEqual(classic30Scores);
+                expect(actualData.newHighScoreIndex).toBeNull();
             })
             it('should add the score data if in the top 5', () => {
                 const expectedScores = [
@@ -159,9 +155,10 @@ describe('ResultsStorage', () => {
                     score25,
                     score24_old
                 ];
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(score30, classic30Scores);
-                expect(actualData).toEqual(expectedScores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(score30, classic30Scores);
+                expect(actualData.highScoresForGameType).toEqual(expectedScores);
+                expect(actualData.newHighScoreIndex).toBe(0);
             })
             it('should take the lowest total time as better when two scores are the same with new score slower', () => {
                 const oldScores: ScoreData[] = [
@@ -180,9 +177,10 @@ describe('ResultsStorage', () => {
                     score24_old
                 ];
 
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(newScore, oldScores);
-                expect(actualData).toEqual(expectedNewScores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(newScore, oldScores);
+                expect(actualData.highScoresForGameType).toEqual(expectedNewScores);
+                expect(actualData.newHighScoreIndex).toBe(1);
             });
             it('should take the lowest total time as better when two scores are the same with new score faster', () => {
                 const oldScores: ScoreData[] = [
@@ -201,9 +199,10 @@ describe('ResultsStorage', () => {
                     score24_old
                 ];
 
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(newScore, oldScores);
-                expect(actualData).toEqual(expectedNewScores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(newScore, oldScores);
+                expect(actualData.highScoresForGameType).toEqual(expectedNewScores);
+                expect(actualData.newHighScoreIndex).toBe(0);
             });
             it('should take the oldest date as better when two scores and times are the same with new score newer', () => {
                 const oldScores: ScoreData[] = [
@@ -222,9 +221,10 @@ describe('ResultsStorage', () => {
                     score24_new
                 ];
 
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(newScore, oldScores);
-                expect(actualData).toEqual(expectedNewScores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(newScore, oldScores);
+                expect(actualData.highScoresForGameType).toEqual(expectedNewScores);
+                expect(actualData.newHighScoreIndex).toBe(4);
             });
             it('should take the oldest date as better when two scores and times are the same with new score older', () => {
                 const oldScores: ScoreData[] = [
@@ -243,9 +243,10 @@ describe('ResultsStorage', () => {
                     score24_new
                 ];
 
-                const actualData = ResultsStorage.getInstance()
-                    .getModifiedScoreDataForGameType(newScore, oldScores);
-                expect(actualData).toEqual(expectedNewScores);
+                const actualData = resultsStorageProto
+                    .getModifiedScoresForGameType(newScore, oldScores);
+                expect(actualData.highScoresForGameType).toEqual(expectedNewScores);
+                expect(actualData.newHighScoreIndex).toBe(3);
             });
         })
     })

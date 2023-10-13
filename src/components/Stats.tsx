@@ -24,7 +24,7 @@ const Stats = () => {
 
     return (
         <>
-            <Score className="score">Score: {score}/{wordCount}</Score>
+            <Score className="score">Score: {score}/{wordCount - 1}</Score>
             <CountDown style={{ width: `${countDownPercentage * 0.5}%` }}/>
         </>
     );

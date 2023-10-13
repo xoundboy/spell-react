@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { config } from './config';
 import { log } from './logger';
-import ResultsStorage, { ScoreData } from './models/ResultsStorage';
+import ResultsStorage, { ScoreData, GameTypeScores } from './models/ResultsStorage';
 import Word, { WordData } from './models/Word';
 
 type CurrentPage = 'home' | 'playClassic30' | 'playWordSprint' | 'playSpeedUp' | 'results';
@@ -20,7 +20,9 @@ export interface PlayPageState {
     countDownPercentage: number,
     startTime: number,
     totalTime: number,
-    isGameOver: boolean
+    isGameOver: boolean,
+    allScores: GameTypeScores,
+    newHighScoreIndex: number | null
 }
 
 const initialState: PlayPageState = {
@@ -29,14 +31,16 @@ const initialState: PlayPageState = {
     wordData: new Word().wordData,
     focusedIndex: 0,
     score: 0,
-    wordCount: -1,
+    wordCount: 0,
     enteredChars: [],
     showCorrectAnswer: false,
     isCountingDown: false,
     countDownPercentage: 100,
     startTime: 0,
     totalTime: 0,
-    isGameOver: false
+    isGameOver: false,
+    allScores: {} as GameTypeScores,
+    newHighScoreIndex: null
 }
 
 export const playPageSlice = createSlice({
@@ -45,7 +49,7 @@ export const playPageSlice = createSlice({
     reducers: {
         switchPage: (state, action) => {
             log('switchPage', action.payload)
-            playPageSlice.caseReducers.resetCountdown(state);
+            // playPageSlice.caseReducers.resetCountdown(state);
             state.currentPage = action.payload;
 
             switch(state.currentPage) {
@@ -61,36 +65,42 @@ export const playPageSlice = createSlice({
                     state.gameType = 'wordSprint';
                     // TODO: implement
                     break;
-                default:
+
+                case 'playSpeedUp':
                     state.gameType = 'speedUp';
+                    break;
+
+                default:
                     // TODO: implement
             }
         },
         gameOver: (state) => {
             log('gameOver')
             state.totalTime = Date.now() - state.startTime;
-            playPageSlice.caseReducers.resetCountdown(state);
-            const scoreData = new ScoreData(
-                state.gameType,
-                state.score,
-                state.wordCount,
-                state.totalTime);
-            console.log('ScoreData',scoreData)
-            ResultsStorage.getInstance().setScoreData(scoreData, state.gameType);
-            state.isGameOver = true;
+            // playPageSlice.caseReducers.resetCountdown(state);
+            const scoreData: ScoreData = {
+                gameType: state.gameType,
+                score: state.score,
+                wordCount: state.wordCount,
+                totalTime: state.totalTime,
+                date: Date.now()
+            };
+            const result = ResultsStorage.getInstance().setScoreData(scoreData, state.gameType);
+            state.allScores = result.allScores
+            state.newHighScoreIndex = result.newHighScoreIndex
+            playPageSlice.caseReducers.switchPage(state, { payload: 'results', type: '' })
         },
         newWord: (state) => {
             log('newWord')
-            if (state.currentPage === 'playClassic30' && state.wordCount === (config.WORDS_PER_GAME)){
-                playPageSlice.caseReducers.gameOver(state);
-            } else {
-                playPageSlice.caseReducers.resetCountdown(state);
-                state.wordData = new Word().wordData;
-                state.enteredChars = [];
-                state.focusedIndex = 0;
-                playPageSlice.caseReducers.startCountdown(state);
-            }
-            state.wordCount++;
+            log('state.wordCount', state.wordCount)
+
+            playPageSlice.caseReducers.resetCountdown(state);
+            state.wordData = new Word().wordData;
+            state.enteredChars = [];
+            state.focusedIndex = 0;
+            playPageSlice.caseReducers.startCountdown(state);
+
+            // state.wordCount++;
         },
         submitWord: state => {
             log('submitWord')
@@ -99,17 +109,27 @@ export const playPageSlice = createSlice({
             if (Word.validateEnteredChars(state.enteredChars, state.wordData)) {
                 log('correct')
                 state.score++;
-                playPageSlice.caseReducers.newWord(state);
+                if (state.wordCount < config.WORDS_PER_GAME) {
+                    state.wordCount++;
+                } else {
+                    state.isGameOver = true;
+                }
 
             } else {
                 log('incorrect')
                 state.showCorrectAnswer = true;
             }
+
         },
         hideCorrectAnswerOverlay: state => {
             log('hideCorrectAnswerOverlay')
             state.showCorrectAnswer = false;
-            playPageSlice.caseReducers.newWord(state);
+            if (state.wordCount < config.WORDS_PER_GAME) {
+                state.wordCount++;
+            } else {
+                state.isGameOver = true;
+            }
+            // playPageSlice.caseReducers.newWord(state);
         },
         startCountdown: state => {
             log('startCountdown')
@@ -185,7 +205,8 @@ export const {
     focusIndex,
     hideCorrectAnswerOverlay,
     updateCountdownPercentage,
-    startCountdown
+    startCountdown,
+    newWord
 } = playPageSlice.actions
 
 export default playPageSlice.reducer

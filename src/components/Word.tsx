@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
 import {
-    focusIndex,
-    hideCorrectAnswerOverlay,
+    focusIndex, gameOver,
+    hideCorrectAnswerOverlay, newWord,
     startCountdown,
     switchPage,
     updateCountdownPercentage
@@ -43,6 +43,7 @@ const Word = () => {
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
     const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
     const isGameOver = useSelector((state: RootState) => state.playPage.isGameOver)
+    const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
 
     let countdownIntervalRef  = React.useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -70,8 +71,12 @@ const Word = () => {
     }, [isCountingDown, dispatch]);
 
     useEffect(() => {
+        dispatch(newWord());
+    }, [wordCount]);
+
+    useEffect(() => {
         if (isGameOver) {
-            dispatch(switchPage('results'));
+            dispatch(gameOver());
         }
     }, [isGameOver]);
 
