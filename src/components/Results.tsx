@@ -4,7 +4,7 @@ import { switchPage } from '../playPageSlice';
 import { RootState } from '../store';
 
 const StyledResults = styled.div`
-  background: rgba(28, 28, 187, 0.9);
+  background: rgba(87, 87, 178, 0.9);
   justify-content: center;
   text-align: center;
   height: 100vh;
@@ -25,9 +25,11 @@ const StyledTableRow = styled.tr`
       opacity: 0;
     }
   }
+
   &.newHighScore {
-    background-color: #2be70d;
-    color: #f64805;
+    background-color: #ff0101;
+    color: #5ce518;
+    font-weight: bold;
     animation: blinker 1s linear infinite;
   }
 `;
