@@ -84,7 +84,7 @@ const Word = () => {
     return (
         <>
             {showCorrectAnswer && <CorrectAnswer />}
-            {wordWithUnderscores.split('').map((char, index) => {
+            {wordWithUnderscores?.split('').map((char, index) => {
                 if(char === "_" ) {
                     currentBlankIndex++;
                     const className = `singleCharacter focusable ${focusedIndex === currentBlankIndex ? 'focused' : ''}`;

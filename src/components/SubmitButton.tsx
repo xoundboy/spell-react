@@ -30,7 +30,7 @@ const SubmitButton = () => {
 
     return (
         <StyledSubmitButton
-            className={focusedIndex === removedChars.length ? "focused" : "" }
+            className={focusedIndex === removedChars?.length ? "focused" : "" }
             onClick={() => dispatch(submitWord())}
         >Submit
         </StyledSubmitButton>

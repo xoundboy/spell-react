@@ -1,4 +1,3 @@
-import { wordList } from '../commonWords';
 import { config } from '../config';
 
 type CharToRemove = {
@@ -13,7 +12,6 @@ export type WordData = {
 }
 
 class Word {
-
     public wordData: WordData;
 
     #fullWord: string = "";
@@ -21,7 +19,8 @@ class Word {
     #removedChars: Array<CharToRemove> = [];
     #noOfCharsToRemove: number = 0;
 
-    constructor() {
+    constructor(wordList: string[] = []) {
+        console.log(wordList)
         while (this.#noOfCharsToRemove === 0) {
             this.#fullWord = wordList[Math.floor(Math.random() * wordList.length)];
             this.#noOfCharsToRemove = Math.floor(this.#fullWord.length / config.REMOVAL_RATIO);
@@ -34,7 +33,7 @@ class Word {
         }
     }
 
-    static validateEnteredChars(enteredChars: string[], wordData: WordData): boolean {
+    static validateEnteredChars(enteredChars: string[], wordData: WordData, wordList: string[]): boolean {
         if (enteredChars.length !== wordData.removedChars.length) return false;
 
         // recreate entire word from entered chars
@@ -44,10 +43,10 @@ class Word {
                 rehydratedWord[index] = enteredChars.shift() as string;
             }
         });
-        const rehydratedWordString = rehydratedWord.join('');
+        const rehydratedWordString = rehydratedWord.join('').toLowerCase();
 
         // check if rehydrated word matches input word or if it otherwise exists in the word list
-        return rehydratedWordString === wordData.inputWord || wordList.includes(rehydratedWordString);
+        return rehydratedWordString === wordData.inputWord.toLowerCase() || wordList.includes(rehydratedWordString);
     }
 
     private prepareWord() {
@@ -87,7 +86,6 @@ class Word {
         if(index > str.length-1) return str;
         return str.substring(0,index) + chr + str.substring(index+1);
     }
-
 }
 
 export default Word;

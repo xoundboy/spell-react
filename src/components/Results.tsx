@@ -64,7 +64,7 @@ const Results = () => {
                         </thead>
                         <tbody>
                             {
-                                allScores[gameType].length > 0 && allScores[gameType].map((score, index) => {
+                                allScores[gameType]?.length > 0 && allScores[gameType].map((score, index) => {
                                     return(
                                         <StyledTableRow
                                             className={`scoreRow ${newHighScoreIndex === index ? 'newHighScore' : ''}`}

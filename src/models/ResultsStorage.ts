@@ -54,7 +54,8 @@ class ResultsStorage implements IResultsStorage {
             localStorage.setItem(this.storageKey, JSON.stringify({
                 classic30: [],
                 wordSprint: [],
-                speedUp: []
+                speedUp: [],
+                classic10000: []
             }));
         }
     }
@@ -76,14 +77,14 @@ class ResultsStorage implements IResultsStorage {
         highScoresForGameType:ScoreData[],
         newHighScoreIndex: number | null
     } {
-        if(highScoresForGameType.length === 0) {
+        if(highScoresForGameType?.length === 0) {
             return {
                 highScoresForGameType: [scoreData],
                 newHighScoreIndex: 0
             };
         }
         let newHighScoreIndex = null;
-        for (let i = 0; i < highScoresForGameType.length; i++) {
+        for (let i = 0; i < highScoresForGameType?.length; i++) {
             if (scoreData.score > highScoresForGameType[i].score) {
                 highScoresForGameType.splice(i, 0, scoreData);
                 newHighScoreIndex = i;
@@ -102,11 +103,11 @@ class ResultsStorage implements IResultsStorage {
                 }
             }
         }
-        if (highScoresForGameType.length < config.MAX_HIGH_SCORES && newHighScoreIndex === null) {
-            highScoresForGameType.splice(highScoresForGameType.length, 0, scoreData);
-            newHighScoreIndex = highScoresForGameType.length - 1;
+        if (highScoresForGameType?.length < config.MAX_HIGH_SCORES && newHighScoreIndex === null) {
+            highScoresForGameType.splice(highScoresForGameType?.length, 0, scoreData);
+            newHighScoreIndex = highScoresForGameType?.length - 1;
         }
-        if (highScoresForGameType.length > config.MAX_HIGH_SCORES) {
+        if (highScoresForGameType?.length > config.MAX_HIGH_SCORES) {
             highScoresForGameType.pop();
         }
         newHighScoreIndex = newHighScoreIndex !== null && newHighScoreIndex <= 4 ? newHighScoreIndex : null;

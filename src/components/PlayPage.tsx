@@ -51,8 +51,6 @@ function PlayPage() {
         return () => window.removeEventListener("keydown", handleKeyDown);
     });
 
-
-
     return (
         <StyledPage>
             <Stats />

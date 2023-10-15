@@ -105,7 +105,8 @@ const speedUpScores: ScoreData[] = [
 const mockScoreData: GameTypeScores = {
     classic30: classic30Scores,
     wordSprint: wordSprintScores,
-    speedUp: speedUpScores
+    speedUp: speedUpScores,
+    classic10000: []
 }
 
 // Use the prototype to access private methods
@@ -118,7 +119,8 @@ describe('ResultsStorage', () => {
             const expectedData = {
                 classic30: [],
                 wordSprint: [],
-                speedUp: []
+                speedUp: [],
+                classic10000: []
             };
             const actualData = resultsStorageProto.getData();
             expect(actualData).toEqual(expectedData);

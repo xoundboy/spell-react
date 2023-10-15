@@ -21,9 +21,6 @@ const Wrong = styled.div`
     font-size: 40px;
     color: red;`
 
-const Text = styled.div`
-    color: goldenrod;`;
-
 const Correction = styled.div`
   @keyframes blinker {
     50% {
@@ -41,7 +38,6 @@ const CorrectAnswer = () => {
     return (
         <Overlay className="correct-answer">
             <Wrong>WRONG!</Wrong>
-            {/*<Text>Correct Answer</Text>*/}
             <Correction>{inputWord}</Correction>
         </Overlay>
     );
