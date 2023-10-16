@@ -141,6 +141,10 @@ export const playPageSlice = createSlice({
             log('startCountdown')
             state.isCountingDown = true;
         },
+        pauseCountdown: state => {
+            log('pauseCountdown')
+            state.isCountingDown = false;
+        },
         updateCountdownPercentage: (state, action) => {
             state.countDownPercentage -= action.payload;
             if(state.countDownPercentage <= 0) {
@@ -212,7 +216,8 @@ export const {
     hideCorrectAnswerOverlay,
     updateCountdownPercentage,
     startCountdown,
-    newWord
+    newWord,
+    pauseCountdown
 } = playPageSlice.actions
 
 export default playPageSlice.reducer

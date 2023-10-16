@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import { config } from '../config';
 import { deleteChar, enterChar, submitWord, tab, tabBack } from '../playPageSlice';
-import { RootState } from '../store';
+import HaltButton from './HaltButton';
 import Stats from './Stats';
 import SubmitButton from './SubmitButton';
 import Word from './Word';
@@ -56,6 +57,7 @@ function PlayPage() {
             <Stats />
             <Word />
             <SubmitButton />
+            {config.LOGGING_ENABLED && <HaltButton />}
         </StyledPage>
     );
 }
