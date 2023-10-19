@@ -57,11 +57,21 @@ export const playPageSlice = createSlice({
 
             switch(state.currentPage) {
                 case 'playClassic30':
+                    state.isGameOver = false;
+                    state.score = 0;
+                    state.wordCount = 0;
+                    state.startTime = Date.now();
+                    playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
                     state.gameType = 'classic30';
                     state.wordList = wordList3000;
                     break;
 
                 case 'playClassic10000':
+                    state.isGameOver = false;
+                    state.score = 0;
+                    state.wordCount = 0;
+                    state.startTime = Date.now();
+                    playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
                     state.gameType = 'classic10000';
                     state.wordList = wordList10000;
                     break;
@@ -78,11 +88,6 @@ export const playPageSlice = createSlice({
                 default:
                     // TODO: implement
             }
-            state.isGameOver = false;
-            state.score = 0;
-            state.wordCount = 0;
-            state.startTime = Date.now();
-            playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
         },
         gameOver: (state) => {
             log('gameOver')
