@@ -37,6 +37,17 @@ const StyledTableRow = styled.tr`
 const StyledTableCell = styled.td`
 padding: 30px;`;
 
+const StyledTryAgainButton = styled.button`
+  background: #8dee81;
+  color: #ff0000;
+  font-size: 32px;
+  padding: 20px;
+  display: inline-block;
+  border: 1px solid #ff0000;
+  border-radius: 9px;
+  margin-top: 20px;
+`;
+
 const Results = () => {
     const dispatch = useDispatch();
     const score = useSelector((state: RootState) => state.playPage.score);
@@ -50,7 +61,7 @@ const Results = () => {
         <>
             <StyledResults>
                 <span>You scored {score}/{wordCount} in {formattedTime} seconds!</span>
-                <button onClick={() => dispatch(switchPage('playClassic30'))}>Try again</button>
+                <StyledTryAgainButton onClick={() => dispatch(switchPage(gameType))}>TRY AGAIN</StyledTryAgainButton>
                 <>
                     <p>Hi scores for {gameType}</p>
                     <StyledHiScoresTable>

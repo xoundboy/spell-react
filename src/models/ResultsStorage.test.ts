@@ -1,63 +1,64 @@
+import { GameType } from '../playPageSlice';
 import ResultsStorage, { GameTypeScores, ScoreData } from './ResultsStorage';
 
 const score30: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 30,
     wordCount: 30,
     totalTime: 243,
     date: 1697188862432
 }
 const score29_slow: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 29,
     wordCount: 30,
     totalTime: 244,
     date: 1697188862432
 };
 const score29_fast: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 29,
     wordCount: 30,
     totalTime: 243,
     date: 1697188862432
 }
 const score28: ScoreData =     {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 28,
     wordCount: 30,
     totalTime: 236,
     date: 1697188862432
 }
 const score25: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 25,
     wordCount: 30,
     totalTime: 233,
     date: 1697188862432
 };
 const score24_old: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 24,
     wordCount: 30,
     totalTime: 232,
     date: 1697188862432
 }
 const score24_new: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 24,
     wordCount: 30,
     totalTime: 232,
     date: 1697188923234
 }
 const score23: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 23,
     wordCount: 30,
     totalTime: 232,
     date: 1697188862432
 }
 const score22: ScoreData = {
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     score: 22,
     wordCount: 30,
     totalTime: 232,
@@ -72,14 +73,14 @@ const classic30Scores: ScoreData[] = [
 ];
 const wordSprintScores: ScoreData[] = [
     {
-        gameType: 'wordSprint',
+        gameType: GameType.WORD_SPRINT,
         score: 34,
         wordCount: 38,
         totalTime: 120,
         date: 1697188862432
     },
     {
-        gameType: 'wordSprint',
+        gameType: GameType.WORD_SPRINT,
         score: 29,
         wordCount: 32,
         totalTime: 120,
@@ -88,14 +89,14 @@ const wordSprintScores: ScoreData[] = [
 ];
 const speedUpScores: ScoreData[] = [
     {
-        gameType: 'speedUp',
+        gameType: GameType.SPEED_UP,
         score: 34,
         wordCount: 38,
         totalTime: 178,
         date: 1697188862432
     },
     {
-        gameType: 'speedUp',
+        gameType: GameType.SPEED_UP,
         score: 29,
         wordCount: 32,
         totalTime: 167,

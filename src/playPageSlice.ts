@@ -7,7 +7,13 @@ import { wordList3000 } from './wordLists/commonWords3000';
 import { wordList10000 } from './wordLists/commonWords10_000';
 
 type CurrentPage = 'home' | 'playClassic30' | 'playClassic10000' | 'playWordSprint' | 'playSpeedUp' | 'results';
-export type GameType = 'classic30' | 'wordSprint' | 'speedUp' | 'classic10000';
+// export type GameType = 'classic30' | 'wordSprint' | 'speedUp' | 'classic10000';
+export enum GameType {
+    CLASSIC_30 = 'classic30',
+    WORD_SPRINT = 'wordSprint',
+    SPEED_UP = 'speedUp',
+    CLASSIC_10000 = 'classic10000'
+}
 
 export interface PlayPageState {
     currentPage: CurrentPage,
@@ -30,7 +36,7 @@ export interface PlayPageState {
 
 const initialState: PlayPageState = {
     currentPage: 'home',
-    gameType: 'classic30',
+    gameType: GameType.CLASSIC_30,
     wordData: {} as WordData,
     focusedIndex: 0,
     score: 0,
@@ -55,24 +61,24 @@ export const playPageSlice = createSlice({
             log('switchPage', action.payload)
             state.currentPage = action.payload;
 
-            switch(state.currentPage) {
-                case 'playClassic30':
+            switch(state.currentPage as GameType) {
+                case GameType.CLASSIC_30:
                     state.isGameOver = false;
                     state.score = 0;
                     state.wordCount = 0;
                     state.startTime = Date.now();
                     playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
-                    state.gameType = 'classic30';
+                    state.gameType = GameType.CLASSIC_30;
                     state.wordList = wordList3000;
                     break;
 
-                case 'playClassic10000':
+                case GameType.CLASSIC_10000:
                     state.isGameOver = false;
                     state.score = 0;
                     state.wordCount = 0;
                     state.startTime = Date.now();
                     playPageSlice.caseReducers.hideCorrectAnswerOverlay(state);
-                    state.gameType = 'classic10000';
+                    state.gameType = GameType.CLASSIC_10000;
                     state.wordList = wordList10000;
                     break;
 
