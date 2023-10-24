@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
@@ -37,18 +37,17 @@ const CharInputField = styled.div`
 
 const Word = () => {
     const dispatch = useDispatch();
-    const wordWithUnderscores = useSelector((state: RootState) => state.playPage.wordData).wordWithUnderscores
     // const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
     const focusedIndex = useFocusStore(state => state.index);
     const focusIndex = useFocusStore(state => state.focusIndex);
-
+    const wordData = useSelector((state: RootState) => state.playPage.wordData)
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
     const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
     const isGameOver = useSelector((state: RootState) => state.playPage.isGameOver)
     const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
 
-    let countdownIntervalRef  = React.useRef<ReturnType<typeof setInterval> | null>(null);
+    const countdownIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
         console.log('focusedIndex', focusedIndex)
@@ -87,14 +86,14 @@ const Word = () => {
         }
     }, [isGameOver]);
 
-    let currentBlankIndex = -1;
     return (
         <>
             {showCorrectAnswer && <CorrectAnswer />}
-            {wordWithUnderscores?.split('').map((char, index) => {
+            {wordData.wordWithUnderscores?.split('').map((char, index) => {
                 if(char === "_" ) {
-                    currentBlankIndex++;
-                    const className = `singleCharacter focusable ${focusedIndex === currentBlankIndex ? 'focused' : ''}`;
+                    const currentBlankIndex = wordData.removedCharIndices.indexOf(index);
+                    const className = `singleCharacter focusable ${focusedIndex 
+                        === currentBlankIndex ? 'focused' : ''}`;
                     return <CharInputField
                         className={className}
                         key={index}

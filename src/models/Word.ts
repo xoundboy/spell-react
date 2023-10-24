@@ -8,7 +8,8 @@ type CharToRemove = {
 export type WordData = {
     inputWord: string,
     wordWithUnderscores: string,
-    removedChars: Array<{ char: string, index: number }>
+    removedChars: Array<{ char: string, index: number }>,
+    removedCharIndices: number[]
 }
 
 class Word {
@@ -18,6 +19,7 @@ class Word {
     #wordWithUnderscores: string = "";
     #removedChars: Array<CharToRemove> = [];
     #noOfCharsToRemove: number = 0;
+    #removedCharIndices: number[] = [];
 
     constructor(wordList: string[] = []) {
         console.log(wordList)
@@ -29,7 +31,8 @@ class Word {
         this.wordData = {
             inputWord: this.#fullWord,
             wordWithUnderscores: this.#wordWithUnderscores,
-            removedChars: this.#removedChars
+            removedChars: this.#removedChars,
+            removedCharIndices: this.#removedCharIndices
         }
     }
 
@@ -56,6 +59,7 @@ class Word {
         randomIndices.sort((a, b) => a - b);
         let modifiedWord = this.#fullWord;
         // replace chars with underscores using random indices
+        console.log('randomIndices', randomIndices)
         randomIndices.forEach(index => {
             const charToRemove: CharToRemove = {
                 char: this.#fullWord.charAt(index),
@@ -68,6 +72,7 @@ class Word {
 
         this.#wordWithUnderscores = modifiedWord;
         this.#removedChars = removedChars;
+        this.#removedCharIndices = randomIndices;
     }
 
     private chooseRemovalIndices(wordLength: number, noOfIndices: number): number[] {
