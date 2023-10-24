@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
 import {
-    focusIndex, gameOver,
+    gameOver,
     hideCorrectAnswerOverlay, newWord,
     startCountdown,
-    switchPage,
     updateCountdownPercentage
 } from '../playPageSlice';
 import { RootState } from '../store';
+import { useFocusStore } from '../zstore';
 import CorrectAnswer from './CorrectAnswer';
 
 const CharSpan = styled.span`
@@ -38,7 +38,10 @@ const CharInputField = styled.div`
 const Word = () => {
     const dispatch = useDispatch();
     const wordWithUnderscores = useSelector((state: RootState) => state.playPage.wordData).wordWithUnderscores
-    const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
+    // const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
+    const focusedIndex = useFocusStore(state => state.index);
+    const focusIndex = useFocusStore(state => state.focusIndex);
+
     const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
     const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
     const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
@@ -46,6 +49,10 @@ const Word = () => {
     const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
 
     let countdownIntervalRef  = React.useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        console.log('focusedIndex', focusedIndex)
+    }, [focusedIndex]);
 
     useEffect(() => {
         dispatch(startCountdown())
@@ -91,7 +98,10 @@ const Word = () => {
                     return <CharInputField
                         className={className}
                         key={index}
-                        onClick={() => dispatch(focusIndex(currentBlankIndex))}
+                        onClick={() => {
+                            console.log('clicked', currentBlankIndex)
+                            return focusIndex(currentBlankIndex)
+                        }}
                     >{enteredChars[currentBlankIndex] || "_"}</CharInputField>
                 } else {
                     return <CharSpan key={index}>{char}</CharSpan>

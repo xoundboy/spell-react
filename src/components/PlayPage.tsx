@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
 import { deleteChar, enterChar, submitWord, tab, tabBack } from '../playPageSlice';
+import { useFocusStore } from '../zstore';
 import HaltButton from './HaltButton';
 import Stats from './Stats';
 import SubmitButton from './SubmitButton';
@@ -16,6 +17,8 @@ const StyledPage = styled.div`
 
 function PlayPage() {
     const dispatch = useDispatch()
+    const focusNext = useFocusStore(state => state.focusNext);
+    const focusPrev = useFocusStore(state => state.focusPrev);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -32,9 +35,9 @@ function PlayPage() {
                 case event.key === "Tab":
                     event.preventDefault();
                     if (event.shiftKey) {
-                        dispatch(tabBack())
+                        focusPrev();
                     } else {
-                        dispatch(tab())
+                        focusNext();
                     }
                     break;
 
