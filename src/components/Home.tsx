@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { useAppStore } from '../zstore';
+import { GameType, Page, useAppStore } from '../zstore';
 
 const StyledMenuPage = styled.div`
   background: rgba(33, 33, 134, 0.9);
@@ -42,8 +42,8 @@ const Home = () => {
         <StyledMenuPage>
             <StyledH1>Spell It In!</StyledH1>
             <StyledH2>A Spelling Game</StyledH2>
-            <StyledButton onClick={() => switchPage('playClassic30')}>Classic 30</StyledButton>
-            <StyledButton onClick={() => switchPage('playClassic10000')}>Top ten thousand words</StyledButton>
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_30)}>Classic 30</StyledButton>
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_10000)}>Top ten thousand words</StyledButton>
             {/*<StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>*/}
             {/*<StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>*/}
         </StyledMenuPage>

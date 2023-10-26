@@ -22,7 +22,6 @@ class Word {
     #removedCharIndices: number[] = [];
 
     constructor(wordList: string[] = []) {
-        console.log(wordList)
         while (this.#noOfCharsToRemove === 0) {
             this.#fullWord = wordList[Math.floor(Math.random() * wordList?.length)];
             this.#noOfCharsToRemove = Math.floor(this.#fullWord?.length / config.REMOVAL_RATIO);

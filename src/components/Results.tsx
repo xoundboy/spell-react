@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { CurrentPage, useAppStore } from '../zstore';
+import { Page, useAppStore } from '../zstore';
 
 const StyledResults = styled.div`
   background: rgba(87, 87, 178, 0.9);
@@ -59,7 +59,7 @@ const Results = () => {
         <>
             <StyledResults>
                 <span>You scored {score}/{wordCount} in {formattedTime} seconds!</span>
-                <StyledTryAgainButton onClick={() => switchPage(gameType)}>TRY AGAIN</StyledTryAgainButton>
+                <StyledTryAgainButton onClick={() => switchPage(Page.PLAY, gameType)}>TRY AGAIN</StyledTryAgainButton>
                 <>
                     <p>Hi scores for {gameType}</p>
                     <StyledHiScoresTable>

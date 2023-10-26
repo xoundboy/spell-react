@@ -36,7 +36,7 @@ const Word = () => {
     const isCountingDown = useAppStore((state) => state.isCountingDown)
     const isGameOver = useAppStore((state) => state.isGameOver)
     const wordCount = useAppStore((state) => state.wordCount)
-    const startCountdown = useAppStore((state) => state.startCountdown)
+    // const startCountdown = useAppStore((state) => state.startCountdown)
     const hideCorrectAnswerOverlay = useAppStore((state) => state.hideCorrectAnswerOverlay)
     const updateCountdownPercentage = useAppStore((state) => state.updateCountdownPercentage)
     const newWord = useAppStore((state) => state.newWord)
@@ -45,7 +45,8 @@ const Word = () => {
     const countdownIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
 
     useEffect(() => {
-        startCountdown()
+        newWord();
+        // startCountdown()
     }, []);
 
     useEffect(() => {
