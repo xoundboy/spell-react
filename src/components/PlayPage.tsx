@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { config } from '../config';
-import { deleteChar, enterChar, submitWord, tab, tabBack } from '../playPageSlice';
-import { useFocusStore } from '../zstore';
+import { useAppStore } from '../zstore';
 import HaltButton from './HaltButton';
 import Stats from './Stats';
 import SubmitButton from './SubmitButton';
@@ -16,20 +14,22 @@ const StyledPage = styled.div`
   height: 100vh;`
 
 function PlayPage() {
-    const dispatch = useDispatch()
-    const focusNext = useFocusStore(state => state.focusNext);
-    const focusPrev = useFocusStore(state => state.focusPrev);
+    const focusNext = useAppStore(state => state.focusNext);
+    const focusPrev = useAppStore(state => state.focusPrev);
+    const enterChar = useAppStore(state => state.enterChar);
+    const deleteChar = useAppStore(state => state.deleteChar);
+    const submitWord = useAppStore(state => state.submitWord);
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             switch (true) {
 
                 case event.key === "Backspace":
-                    dispatch(deleteChar());
+                    deleteChar();
                     break;
 
                 case event.key === "Enter":
-                    dispatch(submitWord());
+                    submitWord();
                     break;
 
                 case event.key === "Tab":
@@ -41,11 +41,11 @@ function PlayPage() {
                     }
                     break;
 
-                case event.key.length > 1:
+                case event.key?.length > 1:
                     break;
 
                 case !!event.key.match(/[a-z]/i) :
-                    dispatch(enterChar(event.key));
+                    enterChar(event.key);
                     break;
 
                 default:

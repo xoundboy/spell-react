@@ -1,7 +1,6 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { pauseCountdown } from '../playPageSlice';
+import { useAppStore } from '../zstore';
 
 const StyledButton = styled.button`
   background: #721a1a;
@@ -20,9 +19,9 @@ const StyledButton = styled.button`
 `;
 
 const HaltButton = () => {
-    const dispatch = useDispatch()
+    const pauseCountdown = useAppStore((state) => state.pauseCountdown)
     return (
-        <StyledButton onClick={() => dispatch(pauseCountdown())}>Halt for debugging</StyledButton>
+        <StyledButton onClick={() => pauseCountdown()}>Halt for debugging</StyledButton>
     );
 }
 
