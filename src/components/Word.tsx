@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { config } from '../config';
@@ -44,6 +45,7 @@ const Word = () => {
     const outOfTime = useAppStore(state => state.outOfTime);
 
     const countdownIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
+
 
     useEffect(() => {
         if (showCorrectAnswer)  {
