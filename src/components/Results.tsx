@@ -29,11 +29,13 @@ const StyledTableRow = styled.tr`
     color: #5ce518;
     font-weight: bold;
     animation: blinker 1s linear infinite;
+    animation-iteration-count: 3;
   }
 `;
 
 const StyledTableCell = styled.td`
-padding: 30px;`;
+  padding: 30px;
+`;
 
 const StyledTryAgainButton = styled.button`
   background: #8dee81;
