@@ -1,7 +1,6 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../store';
+import { useAppStore } from '../zstore';
 
 const Score = styled.div`
   color: #555cc7;
@@ -18,9 +17,9 @@ const CountDown = styled.div`
 `;
 
 const Stats = () => {
-    const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
-    const score = useSelector((state: RootState) => state.playPage.score)
-    const countDownPercentage = useSelector((state: RootState) => state.playPage.countDownPercentage)
+    const wordCount = useAppStore((state) => state.wordCount)
+    const score = useAppStore((state) => state.score)
+    const countDownPercentage = useAppStore((state) => state.countDownPercentage)
 
     return (
         <>

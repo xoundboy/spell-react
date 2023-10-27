@@ -1,4 +1,4 @@
-import { GameType } from '../playPageSlice';
+import { GameType } from '../zstore';
 import ResultsStorage, { GameTypeScores, ScoreData } from './ResultsStorage';
 
 const score30: ScoreData = {

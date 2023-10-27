@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import { GameType, switchPage } from '../playPageSlice';
+import { GameType, Page, useAppStore } from '../zstore';
 
 const StyledMenuPage = styled.div`
   background: rgba(33, 33, 134, 0.9);
@@ -38,13 +37,13 @@ const StyledH2 = styled.h2`
 `;
 
 const Home = () => {
-    const dispatch = useDispatch()
+    const switchPage = useAppStore((state) => state.switchPage)
     return(
         <StyledMenuPage>
             <StyledH1>Spell It In!</StyledH1>
             <StyledH2>A Spelling Game</StyledH2>
-            <StyledButton onClick={() => dispatch(switchPage(GameType.CLASSIC_30))}>Classic 30</StyledButton>
-            <StyledButton onClick={() => dispatch(switchPage(GameType.CLASSIC_10000))}>Top ten thousand words</StyledButton>
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_30)}>Classic 30</StyledButton>
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_10000)}>Top ten thousand words</StyledButton>
             {/*<StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>*/}
             {/*<StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>*/}
         </StyledMenuPage>

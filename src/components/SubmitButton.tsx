@@ -1,8 +1,6 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { submitWord } from '../playPageSlice';
-import { RootState } from '../store';
+import { useAppStore } from '../zstore';
 
 const StyledSubmitButton = styled.button`
   text-align: center;
@@ -24,14 +22,14 @@ const StyledSubmitButton = styled.button`
 `;
 
 const SubmitButton = () => {
-    const dispatch = useDispatch();
-    const removedChars = useSelector((state: RootState) => state.playPage.wordData).removedChars
-    const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
+    const removedChars = useAppStore((state) => state.wordData).removedChars
+    const focusedIndex = useAppStore(state => state.focusedIndex);
+    const submitWord = useAppStore(state => state.submitWord);
 
     return (
         <StyledSubmitButton
             className={focusedIndex === removedChars?.length ? "focused" : "" }
-            onClick={() => dispatch(submitWord())}
+            onClick={() => submitWord()}
         >Submit
         </StyledSubmitButton>
     )

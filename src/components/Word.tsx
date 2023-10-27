@@ -1,14 +1,8 @@
-import { useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { config } from '../config';
-import {
-    focusIndex, gameOver,
-    hideCorrectAnswerOverlay, newWord,
-    startCountdown,
-    updateCountdownPercentage
-} from '../playPageSlice';
-import { RootState } from '../store';
+import { useAppStore } from '../zstore';
 import CorrectAnswer from './CorrectAnswer';
 
 const CharSpan = styled.span`
@@ -35,49 +29,60 @@ const CharInputField = styled.div`
 `;
 
 const Word = () => {
-    const dispatch = useDispatch();
-    const wordData = useSelector((state: RootState) => state.playPage.wordData)
-    const focusedIndex = useSelector((state: RootState) => state.playPage.focusedIndex)
-    const enteredChars = useSelector((state: RootState) => state.playPage.enteredChars)
-    const showCorrectAnswer = useSelector((state: RootState) => state.playPage.showCorrectAnswer)
-    const isCountingDown = useSelector((state: RootState) => state.playPage.isCountingDown)
-    const isGameOver = useSelector((state: RootState) => state.playPage.isGameOver)
-    const wordCount = useSelector((state: RootState) => state.playPage.wordCount)
+    const focusedIndex = useAppStore(state => state.focusedIndex);
+    const focusIndex = useAppStore(state => state.focusIndex);
+    const wordData = useAppStore(state => state.wordData);
+    const enteredChars = useAppStore((state) => state.enteredChars)
+    const showCorrectAnswer = useAppStore((state) => state.showCorrectAnswer)
+    const isCountingDown = useAppStore((state) => state.isCountingDown)
+    const isGameOver = useAppStore((state) => state.isGameOver)
+    const hideCorrectAnswerOverlay = useAppStore((state) => state.hideCorrectAnswerOverlay)
+    const updateCountdownPercentage = useAppStore((state) => state.updateCountdownPercentage)
+    const newWord = useAppStore((state) => state.newWord)
+    const gameOver = useAppStore((state) => state.gameOver)
+    const showNewWord = useAppStore((state) => state.showNewWord)
+    const submitWord = useAppStore(state => state.submitWord);
+    const outOfTime = useAppStore(state => state.outOfTime);
 
     const countdownIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    useEffect(() => {
-        dispatch(startCountdown())
-    }, []);
 
     useEffect(() => {
         if (showCorrectAnswer)  {
             setTimeout(() => {
-                dispatch(hideCorrectAnswerOverlay())
+                hideCorrectAnswerOverlay()
             }, 1000);
         }
-    }, [showCorrectAnswer, dispatch]);
+    }, [showCorrectAnswer]);
+
+    useEffect(() => {
+        if (showNewWord)  {
+            newWord()
+        }
+    }, [showNewWord]);
 
     useEffect(() => {
         if (isCountingDown)  {
-            const percentageReductionPerSecond = 100 / config.INITIAL_COUNTDOWN_SECONDS;
+            const percentageReductionPerTick = 5 / (config.INITIAL_COUNTDOWN_SECONDS);
             countdownIntervalRef.current = setInterval(() => {
-                dispatch(updateCountdownPercentage(percentageReductionPerSecond));
-            }, 1000)
+                updateCountdownPercentage(percentageReductionPerTick);
+            }, 50)
         } else {
             countdownIntervalRef.current && clearInterval(countdownIntervalRef.current);
         }
-    }, [isCountingDown, dispatch]);
-
-    useEffect(() => {
-        dispatch(newWord());
-    }, [wordCount]);
+    }, [isCountingDown]);
 
     useEffect(() => {
         if (isGameOver) {
-            dispatch(gameOver());
+            gameOver();
         }
     }, [isGameOver]);
+
+    useEffect(() => {
+        if(outOfTime) {
+            submitWord();
+        }
+    },[outOfTime])
 
     return (
         <>
@@ -90,7 +95,7 @@ const Word = () => {
                     return <CharInputField
                         className={className}
                         key={index}
-                        onClick={() => dispatch(focusIndex(currentBlankIndex))}
+                        onClick={() => focusIndex(currentBlankIndex)}
                     >{enteredChars[currentBlankIndex] || "_"}</CharInputField>
                 } else {
                     return <CharSpan key={index}>{char}</CharSpan>

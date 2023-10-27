@@ -22,10 +22,9 @@ class Word {
     #removedCharIndices: number[] = [];
 
     constructor(wordList: string[] = []) {
-        console.log(wordList)
         while (this.#noOfCharsToRemove === 0) {
-            this.#fullWord = wordList[Math.floor(Math.random() * wordList.length)];
-            this.#noOfCharsToRemove = Math.floor(this.#fullWord.length / config.REMOVAL_RATIO);
+            this.#fullWord = wordList[Math.floor(Math.random() * wordList?.length)];
+            this.#noOfCharsToRemove = Math.floor(this.#fullWord?.length / config.REMOVAL_RATIO);
         }
         this.prepareWord();
         this.wordData = {
@@ -37,7 +36,7 @@ class Word {
     }
 
     static validateEnteredChars(enteredChars: string[], wordData: WordData, wordList: string[]): boolean {
-        if (enteredChars.length !== wordData.removedChars.length) return false;
+        if (enteredChars?.length !== wordData.removedChars.length) return false;
 
         // recreate entire word from entered chars
         const rehydratedWord = wordData.wordWithUnderscores.split('');
@@ -54,12 +53,9 @@ class Word {
 
     private prepareWord() {
         const removedChars : Array<CharToRemove> = [];
-        const randomIndices = this.chooseRemovalIndices(this.#fullWord.length, this.#noOfCharsToRemove);
-        // sort the indices
+        const randomIndices = this.chooseRemovalIndices(this.#fullWord?.length, this.#noOfCharsToRemove);
         randomIndices.sort((a, b) => a - b);
         let modifiedWord = this.#fullWord;
-        // replace chars with underscores using random indices
-        console.log('randomIndices', randomIndices)
         randomIndices.forEach(index => {
             const charToRemove: CharToRemove = {
                 char: this.#fullWord.charAt(index),
@@ -88,7 +84,7 @@ class Word {
     }
 
     private setCharAt(str: string, index: number, chr: string) {
-        if(index > str.length-1) return str;
+        if(index > str?.length-1) return str;
         return str.substring(0,index) + chr + str.substring(index+1);
     }
 }

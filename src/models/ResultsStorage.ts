@@ -1,5 +1,5 @@
 import { config } from '../config';
-import { GameType } from '../playPageSlice';
+import { GameType } from '../zstore';
 
 export type ScoreData = {
     gameType: GameType;

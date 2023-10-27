@@ -1,6 +1,5 @@
-import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { RootState } from '../store';
+import { useAppStore } from '../zstore';
 
 const Overlay = styled.div`
     position: absolute;
@@ -34,7 +33,7 @@ const Correction = styled.div`
 `;
 
 const CorrectAnswer = () => {
-    const inputWord = useSelector((state: RootState) => state.playPage.wordData).inputWord
+    const inputWord = useAppStore((state) => state.wordData).inputWord
     return (
         <Overlay className="correct-answer">
             <Wrong>WRONG!</Wrong>

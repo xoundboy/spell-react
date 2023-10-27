@@ -1,7 +1,5 @@
-import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { switchPage } from '../playPageSlice';
-import { RootState } from '../store';
+import { Page, useAppStore } from '../zstore';
 
 const StyledResults = styled.div`
   background: rgba(87, 87, 178, 0.9);
@@ -49,19 +47,19 @@ const StyledTryAgainButton = styled.button`
 `;
 
 const Results = () => {
-    const dispatch = useDispatch();
-    const score = useSelector((state: RootState) => state.playPage.score);
-    const wordCount = useSelector((state: RootState) => state.playPage.wordCount);
-    const totalTime = useSelector((state: RootState) => state.playPage.totalTime);
-    const allScores = useSelector((state: RootState) => state.playPage.allScores);
-    const gameType = useSelector((state: RootState) => state.playPage.gameType);
-    const newHighScoreIndex = useSelector((state: RootState) => state.playPage.newHighScoreIndex);
+    const score = useAppStore((state) => state.score);
+    const wordCount = useAppStore((state) => state.wordCount);
+    const totalTime = useAppStore((state) => state.totalTime);
+    const allScores = useAppStore((state) => state.allScores);
+    const gameType = useAppStore((state) => state.gameType);
+    const newHighScoreIndex = useAppStore((state) => state.newHighScoreIndex);
+    const switchPage = useAppStore((state) => state.switchPage);
     const formattedTime = totalTime/1000;
     return (
         <>
             <StyledResults>
                 <span>You scored {score}/{wordCount} in {formattedTime} seconds!</span>
-                <StyledTryAgainButton onClick={() => dispatch(switchPage(gameType))}>TRY AGAIN</StyledTryAgainButton>
+                <StyledTryAgainButton onClick={() => switchPage(Page.PLAY, gameType)}>TRY AGAIN</StyledTryAgainButton>
                 <>
                     <p>Hi scores for {gameType}</p>
                     <StyledHiScoresTable>
