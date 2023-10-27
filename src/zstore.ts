@@ -28,10 +28,12 @@ interface AppState {
     wordCount: number,
     enteredChars: string[],
     showCorrectAnswer: boolean,
+    showNewWord: boolean,
     isCountingDown: boolean,
     countDownPercentage: number,
     startTime: number,
     totalTime: number,
+    outOfTime: boolean,
     isGameOver: boolean,
     allScores: GameTypeScores,
     newHighScoreIndex: number | null,
@@ -50,7 +52,7 @@ interface AppState {
     focusIndex: (index: number) => void,
 }
 
-export const useAppStore = create<AppState>()((set, get) =>
+export const useAppStore = create<AppState>()((set) =>
     ({
         currentPage: Page.HOME,
         gameType: GameType.CLASSIC_30,
@@ -60,10 +62,12 @@ export const useAppStore = create<AppState>()((set, get) =>
         wordCount: 0,
         enteredChars: [],
         showCorrectAnswer: false,
+        showNewWord: false,
         isCountingDown: false,
         countDownPercentage: 100,
         startTime: 0,
         totalTime: 0,
+        outOfTime: false,
         isGameOver: false,
         allScores: {} as GameTypeScores,
         newHighScoreIndex: null,
@@ -84,17 +88,17 @@ export const useAppStore = create<AppState>()((set, get) =>
                             newState.score = 0;
                             newState.wordCount = 0;
                             newState.startTime = Date.now();
-                            get().hideCorrectAnswerOverlay();
                             newState.wordList = wordList3000;
+                            newState.showNewWord = true;
                             break;
 
                         case GameType.CLASSIC_10000:
-                            state.isGameOver = false;
-                            state.score = 0;
-                            state.wordCount = 0;
-                            state.startTime = Date.now();
-                            get().hideCorrectAnswerOverlay();
-                            state.wordList = wordList10000;
+                            newState.isGameOver = false;
+                            newState.score = 0;
+                            newState.wordCount = 0;
+                            newState.startTime = Date.now();
+                            newState.wordList = wordList10000;
+                            newState.showNewWord = true;
                             break;
                         default:
                     }
@@ -112,26 +116,26 @@ export const useAppStore = create<AppState>()((set, get) =>
                 gameType: state.gameType,
                 score: state.score,
                 wordCount: state.wordCount,
-                totalTime: state.totalTime,
+                totalTime: newState.totalTime,
                 date: Date.now()
             };
             const result = ResultsStorage.getInstance().setScoreData(scoreData, state.gameType);
             newState.allScores = result.allScores
             newState.newHighScoreIndex = result.newHighScoreIndex
             newState.isGameOver = true;
-            // get().switchPage(Page.RESULTS);
             return newState;
         }),
         newWord: () => set((state) => {
             log('newWord')
-            log('state.wordCount', state.wordCount)
             const newState = {...state};
-            // newState.isCountingDown = false;
+            newState.outOfTime = false;
             newState.countDownPercentage = 100;
             newState.wordData = new Word(state.wordList).wordData;
             newState.enteredChars = [];
             newState.focusedIndex = 0;
             newState.isCountingDown = true;
+            newState.showNewWord = false;
+            newState.wordCount++;
             return newState;
         }),
         submitWord: () => set((state) => {
@@ -142,12 +146,11 @@ export const useAppStore = create<AppState>()((set, get) =>
             if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
                 log('correct')
                 newState.score++;
-                if (state.wordCount < config.WORDS_PER_GAME) {
-                    newState.wordCount++;
-                } else {
+                if (state.wordCount === config.WORDS_PER_GAME) {
                     newState.isGameOver = true;
+                } else {
+                    newState.showNewWord = true;
                 }
-
             } else {
                 log('incorrect')
                 newState.showCorrectAnswer = true;
@@ -158,10 +161,10 @@ export const useAppStore = create<AppState>()((set, get) =>
             log('hideCorrectAnswerOverlay')
             const newState = {...state};
             newState.showCorrectAnswer = false;
-            if (state.wordCount < config.WORDS_PER_GAME) {
-                newState.wordCount++;
-            } else {
+            if (state.wordCount === config.WORDS_PER_GAME) {
                 newState.isGameOver = true;
+            } else {
+                newState.showNewWord = true;
             }
             return newState;
         }),
@@ -176,7 +179,7 @@ export const useAppStore = create<AppState>()((set, get) =>
             const newState = {...state};
             newState.countDownPercentage -= percentageDelta;
             if(state.countDownPercentage <= 0) {
-                newState.showCorrectAnswer = true;
+                newState.outOfTime = true;
             }
             return newState;
         }),
@@ -187,7 +190,6 @@ export const useAppStore = create<AppState>()((set, get) =>
                 const newEnteredChars = [...state.enteredChars];
                 newEnteredChars[state.focusedIndex] = char;
                 newState.enteredChars = newEnteredChars;
-                // get().focusNext();
                 if (state.focusedIndex < state.wordData.removedChars?.length) {
                     newState.focusedIndex++;
                 }

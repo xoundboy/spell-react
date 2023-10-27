@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { config } from '../config';
 import { useAppStore } from '../zstore';
@@ -35,19 +35,15 @@ const Word = () => {
     const showCorrectAnswer = useAppStore((state) => state.showCorrectAnswer)
     const isCountingDown = useAppStore((state) => state.isCountingDown)
     const isGameOver = useAppStore((state) => state.isGameOver)
-    const wordCount = useAppStore((state) => state.wordCount)
-    // const startCountdown = useAppStore((state) => state.startCountdown)
     const hideCorrectAnswerOverlay = useAppStore((state) => state.hideCorrectAnswerOverlay)
     const updateCountdownPercentage = useAppStore((state) => state.updateCountdownPercentage)
     const newWord = useAppStore((state) => state.newWord)
     const gameOver = useAppStore((state) => state.gameOver)
+    const showNewWord = useAppStore((state) => state.showNewWord)
+    const submitWord = useAppStore(state => state.submitWord);
+    const outOfTime = useAppStore(state => state.outOfTime);
 
     const countdownIntervalRef  = useRef<ReturnType<typeof setInterval> | null>(null);
-
-    useEffect(() => {
-        newWord();
-        // startCountdown()
-    }, []);
 
     useEffect(() => {
         if (showCorrectAnswer)  {
@@ -56,6 +52,12 @@ const Word = () => {
             }, 1000);
         }
     }, [showCorrectAnswer]);
+
+    useEffect(() => {
+        if (showNewWord)  {
+            newWord()
+        }
+    }, [showNewWord]);
 
     useEffect(() => {
         if (isCountingDown)  {
@@ -69,14 +71,16 @@ const Word = () => {
     }, [isCountingDown]);
 
     useEffect(() => {
-        newWord();
-    }, [wordCount]);
-
-    useEffect(() => {
         if (isGameOver) {
             gameOver();
         }
     }, [isGameOver]);
+
+    useEffect(() => {
+        if(outOfTime) {
+            submitWord();
+        }
+    },[outOfTime])
 
     return (
         <>

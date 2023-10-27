@@ -54,11 +54,8 @@ class Word {
     private prepareWord() {
         const removedChars : Array<CharToRemove> = [];
         const randomIndices = this.chooseRemovalIndices(this.#fullWord?.length, this.#noOfCharsToRemove);
-        // sort the indices
         randomIndices.sort((a, b) => a - b);
         let modifiedWord = this.#fullWord;
-        // replace chars with underscores using random indices
-        console.log('randomIndices', randomIndices)
         randomIndices.forEach(index => {
             const charToRemove: CharToRemove = {
                 char: this.#fullWord.charAt(index),
