@@ -61,10 +61,10 @@ const Word = () => {
 
     useEffect(() => {
         if (isCountingDown)  {
-            const percentageReductionPerSecond = 100 / config.INITIAL_COUNTDOWN_SECONDS;
+            const percentageReductionPerTick = 5 / (config.INITIAL_COUNTDOWN_SECONDS);
             countdownIntervalRef.current = setInterval(() => {
-                updateCountdownPercentage(percentageReductionPerSecond);
-            }, 1000)
+                updateCountdownPercentage(percentageReductionPerTick);
+            }, 50)
         } else {
             countdownIntervalRef.current && clearInterval(countdownIntervalRef.current);
         }

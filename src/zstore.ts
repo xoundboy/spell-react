@@ -140,6 +140,11 @@ export const useAppStore = create<AppState>()((set) =>
         }),
         submitWord: () => set((state) => {
             log('submitWord')
+
+            if (state.countDownPercentage > 95) {
+                log('too soon to submit')
+                return state;
+            }
             const newState = {...state};
             newState.isCountingDown = false;
 
