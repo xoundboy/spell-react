@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useAppStore } from '../zstore';
+import { GameType, useAppStore } from '../zstore';
 
 const Score = styled.div`
   color: #555cc7;
@@ -19,11 +19,12 @@ const CountDown = styled.div`
 const Stats = () => {
     const wordCount = useAppStore((state) => state.wordCount)
     const score = useAppStore((state) => state.score)
+    const gameType = useAppStore((state) => state.gameType)
     const countDownPercentage = useAppStore((state) => state.countDownPercentage)
 
     return (
         <>
-            <Score className="score">Score: {score}/{wordCount - 1}</Score>
+            <Score className="score">Score: {score}{gameType !== GameType.SPEED_UP ? `/${wordCount - 1}` : ''}</Score>
             <CountDown style={{ width: `${countDownPercentage * 0.5}%` }}/>
         </>
     );

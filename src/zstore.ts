@@ -100,6 +100,15 @@ export const useAppStore = create<AppState>()((set) =>
                             newState.wordList = wordList10000;
                             newState.showNewWord = true;
                             break;
+
+                        case GameType.SPEED_UP:
+                            newState.isGameOver = false;
+                            newState.score = 0;
+                            newState.wordCount = 0;
+                            newState.startTime = Date.now();
+                            newState.wordList = wordList10000;
+                            newState.showNewWord = true;
+                            break;
                         default:
                     }
                     break;
@@ -148,17 +157,34 @@ export const useAppStore = create<AppState>()((set) =>
             const newState = {...state};
             newState.isCountingDown = false;
 
-            if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
-                log('correct')
-                newState.score++;
-                if (state.wordCount === config.WORDS_PER_GAME) {
-                    newState.isGameOver = true;
-                } else {
-                    newState.showNewWord = true;
-                }
-            } else {
-                log('incorrect')
-                newState.showCorrectAnswer = true;
+            switch (state.gameType) {
+                case GameType.CLASSIC_30:
+                case GameType.CLASSIC_10000:
+                    if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
+                        log('correct')
+                        newState.score++;
+                        if (state.wordCount === config.WORDS_PER_GAME) {
+                            newState.isGameOver = true;
+                        } else {
+                            newState.showNewWord = true;
+                        }
+                    } else {
+                        log('incorrect')
+                        newState.showCorrectAnswer = true;
+                    }
+                    break;
+
+                case GameType.SPEED_UP:
+                    if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
+                        log('correct')
+                        newState.score++;
+                        newState.showNewWord = true;
+                    } else {
+                        log('incorrect')
+                        newState.showCorrectAnswer = true;
+                    }
+                    break;
+                default:
             }
             return newState;
         }),
@@ -166,7 +192,7 @@ export const useAppStore = create<AppState>()((set) =>
             log('hideCorrectAnswerOverlay')
             const newState = {...state};
             newState.showCorrectAnswer = false;
-            if (state.wordCount === config.WORDS_PER_GAME) {
+            if (state.wordCount === config.WORDS_PER_GAME || state.gameType === GameType.SPEED_UP) {
                 newState.isGameOver = true;
             } else {
                 newState.showNewWord = true;

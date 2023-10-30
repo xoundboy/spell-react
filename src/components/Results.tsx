@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Page, useAppStore } from '../zstore';
+import { GameType, Page, useAppStore } from '../zstore';
 
 const StyledResults = styled.div`
   background: rgba(87, 87, 178, 0.9);
@@ -68,7 +68,7 @@ const Results = () => {
                         <thead>
                             <tr>
                                 <th>Score</th>
-                                <th>Word Count</th>
+                                {gameType !== GameType.SPEED_UP && (<th>Word Count</th>)}
                                 <th>Time</th>
                                 <th>Date</th>
                             </tr>
@@ -82,7 +82,7 @@ const Results = () => {
                                             key={index}
                                         >
                                             <StyledTableCell>{score.score}</StyledTableCell>
-                                            <StyledTableCell>{score.wordCount}</StyledTableCell>
+                                            {gameType !== GameType.SPEED_UP && (<StyledTableCell>{score.wordCount}</StyledTableCell>)}
                                             <StyledTableCell>{score.totalTime/1000} secs</StyledTableCell>
                                             <StyledTableCell>{new Date(score.date).toLocaleDateString("en-US")}</StyledTableCell>
                                         </StyledTableRow>);

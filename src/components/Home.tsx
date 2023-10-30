@@ -44,6 +44,7 @@ const Home = () => {
             <StyledH2>A Spelling Game</StyledH2>
             <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_30)}>Classic 30</StyledButton>
             <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_10000)}>Top ten thousand words</StyledButton>
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.SPEED_UP)}>Speed Up</StyledButton>
             {/*<StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>*/}
             {/*<StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>*/}
         </StyledMenuPage>
