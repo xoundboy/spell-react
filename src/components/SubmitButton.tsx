@@ -22,7 +22,7 @@ const StyledSubmitButton = styled.button`
 `;
 
 const SubmitButton = () => {
-    const removedChars = useAppStore((state) => state.wordData).removedChars
+    const removedChars = useAppStore((state) => state.word).removedChars
     const focusedIndex = useAppStore(state => state.focusedIndex);
     const submitWord = useAppStore(state => state.submitWord);
 

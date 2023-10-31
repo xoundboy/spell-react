@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { config } from './config';
 import { log } from './logger';
 import ResultsStorage, { GameTypeScores, ScoreData } from './models/ResultsStorage';
-import Word, { WordData } from './models/Word';
+import Word from './models/Word';
 import { wordList10000 } from './wordLists/commonWords10_000';
 import { wordList3000 } from './wordLists/commonWords3000';
 
@@ -22,7 +22,7 @@ export enum GameType {
 interface AppState {
     currentPage: Page,
     gameType: GameType,
-    wordData: WordData,
+    word: Word,
     focusedIndex: number,
     score: number,
     wordCount: number,
@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>()((set) =>
     ({
         currentPage: Page.HOME,
         gameType: GameType.CLASSIC_30,
-        wordData: {} as WordData,
+        word: {} as Word,
         focusedIndex: 0,
         score: 0,
         wordCount: 0,
@@ -139,7 +139,7 @@ export const useAppStore = create<AppState>()((set) =>
             const newState = {...state};
             newState.outOfTime = false;
             newState.countDownPercentage = 100;
-            newState.wordData = new Word(state.wordList).wordData;
+            newState.word = new Word(state.wordList);
             newState.enteredChars = [];
             newState.focusedIndex = 0;
             newState.isCountingDown = true;
@@ -156,11 +156,12 @@ export const useAppStore = create<AppState>()((set) =>
             }
             const newState = {...state};
             newState.isCountingDown = false;
+            state.word.submitEnteredChars(state.enteredChars);
 
             switch (state.gameType) {
                 case GameType.CLASSIC_30:
                 case GameType.CLASSIC_10000:
-                    if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
+                    if (state.word.isValid()) {
                         log('correct')
                         newState.score++;
                         if (state.wordCount === config.WORDS_PER_GAME) {
@@ -175,7 +176,7 @@ export const useAppStore = create<AppState>()((set) =>
                     break;
 
                 case GameType.SPEED_UP:
-                    if (Word.validateEnteredChars(state.enteredChars, state.wordData, state.wordList)) {
+                    if (state.word.isValid()) {
                         log('correct')
                         newState.score++;
                         newState.showNewWord = true;
@@ -217,11 +218,11 @@ export const useAppStore = create<AppState>()((set) =>
         enterChar: (char: string) => set((state) => {
             log('enterChar', char)
             const newState = {...state};
-            if (state.focusedIndex < state.wordData.removedChars?.length) {
+            if (state.focusedIndex < state.word.removedChars?.length) {
                 const newEnteredChars = [...state.enteredChars];
                 newEnteredChars[state.focusedIndex] = char;
                 newState.enteredChars = newEnteredChars;
-                if (state.focusedIndex < state.wordData.removedChars?.length) {
+                if (state.focusedIndex < state.word.removedChars?.length) {
                     newState.focusedIndex++;
                 }
             }
@@ -245,7 +246,7 @@ export const useAppStore = create<AppState>()((set) =>
             (state) => {
                 log('focusNext')
                 const newState = {...state};
-                if (state.focusedIndex < state.wordData.removedChars?.length) {
+                if (state.focusedIndex < state.word.removedChars?.length) {
                     newState.focusedIndex++;
                 }
                 return newState;

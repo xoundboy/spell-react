@@ -33,11 +33,12 @@ const Correction = styled.div`
 `;
 
 const CorrectAnswer = () => {
-    const inputWord = useAppStore((state) => state.wordData).inputWord
+    const word = useAppStore((state) => state.word)
+
     return (
         <Overlay className="correct-answer">
-            <Wrong>WRONG!</Wrong>
-            <Correction>{inputWord}</Correction>
+            <Wrong>"{word.attemptedWord}" was WRONG!</Wrong>
+            <Correction>{word.inputWord}</Correction>
         </Overlay>
     );
 }

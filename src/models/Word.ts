@@ -5,60 +5,65 @@ type CharToRemove = {
     index: number
 }
 
-export type WordData = {
-    inputWord: string,
-    wordWithUnderscores: string,
-    removedChars: Array<{ char: string, index: number }>,
-    removedCharIndices: number[]
+interface IWord {
+    wordList: string[];
+    inputWord: string;
+    wordWithUnderscores: string;
+    removedChars: Array<CharToRemove>;
+    removedCharIndices: number[];
+    enteredChars: string[];
+    attemptedWord: string;
+    submitEnteredChars(enteredChars: string[]): void;
+    isValid(): boolean;
 }
 
-class Word {
-    public wordData: WordData;
-
-    #fullWord: string = "";
-    #wordWithUnderscores: string = "";
-    #removedChars: Array<CharToRemove> = [];
-    #noOfCharsToRemove: number = 0;
-    #removedCharIndices: number[] = [];
+class Word implements IWord {
+    public wordList: string[] = [];
+    public inputWord: string = "";
+    public wordWithUnderscores: string = "";
+    public removedChars: Array<CharToRemove> = [];
+    public removedCharIndices: number[] = [];
+    public enteredChars: string[] = [];
+    public attemptedWord: string = "";
 
     constructor(wordList: string[] = []) {
-        while (this.#noOfCharsToRemove === 0) {
-            this.#fullWord = wordList[Math.floor(Math.random() * wordList?.length)];
-            this.#noOfCharsToRemove = Math.floor(this.#fullWord?.length / config.REMOVAL_RATIO);
+        this.wordList = wordList;
+        let noOfCharsToRemove = 0;
+        while (noOfCharsToRemove === 0) {
+            this.inputWord = wordList[Math.floor(Math.random() * wordList?.length)];
+            noOfCharsToRemove = Math.floor(this.inputWord?.length / config.REMOVAL_RATIO);
         }
-        this.prepareWord();
-        this.wordData = {
-            inputWord: this.#fullWord,
-            wordWithUnderscores: this.#wordWithUnderscores,
-            removedChars: this.#removedChars,
-            removedCharIndices: this.#removedCharIndices
-        }
+        this.prepareWord(noOfCharsToRemove);
     }
 
-    static validateEnteredChars(enteredChars: string[], wordData: WordData, wordList: string[]): boolean {
-        if (enteredChars?.length !== wordData.removedChars.length) return false;
+    public submitEnteredChars(enteredChars: string[]): void {
+        this.enteredChars = enteredChars;
+        this.rehydrateWord();
+    }
 
+    public isValid(): boolean {
+        return this.inputWord === this.attemptedWord || this.wordList.includes(this.attemptedWord)
+    }
+
+    private rehydrateWord(): void {
         // recreate entire word from entered chars
-        const rehydratedWord = wordData.wordWithUnderscores.split('');
-        wordData.wordWithUnderscores.split('').forEach((char: string, index: number) => {
+        const rehydratedWord = this.wordWithUnderscores.split('');
+        this.wordWithUnderscores.split('').forEach((char: string, index: number) => {
             if (char === '_') {
-                rehydratedWord[index] = enteredChars.shift() as string;
+                rehydratedWord[index] = this.enteredChars.shift() as string;
             }
         });
-        const rehydratedWordString = rehydratedWord.join('').toLowerCase();
-
-        // check if rehydrated word matches input word or if it otherwise exists in the word list
-        return rehydratedWordString === wordData.inputWord.toLowerCase() || wordList.includes(rehydratedWordString);
+        this.attemptedWord = rehydratedWord.join('').toLowerCase();
     }
 
-    private prepareWord() {
+    private prepareWord(noOfCharsToRemove: number) {
         const removedChars : Array<CharToRemove> = [];
-        const randomIndices = this.chooseRemovalIndices(this.#fullWord?.length, this.#noOfCharsToRemove);
+        const randomIndices = this.chooseRemovalIndices(this.inputWord?.length, noOfCharsToRemove);
         randomIndices.sort((a, b) => a - b);
-        let modifiedWord = this.#fullWord;
+        let modifiedWord = this.inputWord;
         randomIndices.forEach(index => {
             const charToRemove: CharToRemove = {
-                char: this.#fullWord.charAt(index),
+                char: this.inputWord.charAt(index),
                 index: index
             }
             removedChars.push(charToRemove);
@@ -66,9 +71,9 @@ class Word {
             modifiedWord = this.setCharAt(modifiedWord, index, '_');
         });
 
-        this.#wordWithUnderscores = modifiedWord;
-        this.#removedChars = removedChars;
-        this.#removedCharIndices = randomIndices;
+        this.wordWithUnderscores = modifiedWord;
+        this.removedChars = removedChars;
+        this.removedCharIndices = randomIndices;
     }
 
     private chooseRemovalIndices(wordLength: number, noOfIndices: number): number[] {

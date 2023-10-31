@@ -31,7 +31,7 @@ const CharInputField = styled.div`
 const Word = () => {
     const focusedIndex = useAppStore(state => state.focusedIndex);
     const focusIndex = useAppStore(state => state.focusIndex);
-    const wordData = useAppStore(state => state.wordData);
+    const wordData = useAppStore(state => state.word);
     const enteredChars = useAppStore((state) => state.enteredChars)
     const showCorrectAnswer = useAppStore((state) => state.showCorrectAnswer)
     const isCountingDown = useAppStore((state) => state.isCountingDown)
@@ -51,7 +51,7 @@ const Word = () => {
         if (showCorrectAnswer)  {
             setTimeout(() => {
                 hideCorrectAnswerOverlay()
-            }, 1000);
+            }, config.CORRECT_ANSWER_OVERLAY_TIMEOUT);
         }
     }, [showCorrectAnswer]);
 
