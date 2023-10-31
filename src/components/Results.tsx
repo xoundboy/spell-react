@@ -60,7 +60,7 @@ const Results = () => {
     return (
         <>
             <StyledResults>
-                <span>You scored {score}/{wordCount} in {formattedTime} seconds!</span>
+                <span>You scored {score}{gameType !== GameType.SPEED_UP ? `/${wordCount}` : ''} in {formattedTime} seconds!</span>
                 <StyledTryAgainButton onClick={() => switchPage(Page.PLAY, gameType)}>TRY AGAIN</StyledTryAgainButton>
                 <>
                     <p>Hi scores for {gameType}</p>
