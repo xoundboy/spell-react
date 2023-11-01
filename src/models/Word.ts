@@ -31,7 +31,7 @@ class Word implements IWord {
         let noOfCharsToRemove = 0;
         while (noOfCharsToRemove === 0) {
             this.inputWord = wordList[Math.floor(Math.random() * wordList?.length)];
-            noOfCharsToRemove = Math.floor(this.inputWord?.length / config.REMOVAL_RATIO);
+            noOfCharsToRemove = Math.floor(this.inputWord?.length * config.REMOVAL_RATIO);
         }
         this.prepareWord(noOfCharsToRemove);
     }
