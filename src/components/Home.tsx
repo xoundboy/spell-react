@@ -36,17 +36,21 @@ const StyledH2 = styled.h2`
   margin: 0 0 50px;
 `;
 
+const StyledInfoLine = styled.p`
+  font-size: 16px;
+`;
 const Home = () => {
     const switchPage = useAppStore((state) => state.switchPage)
     return(
         <StyledMenuPage>
             <StyledH1>Spell It In!</StyledH1>
             <StyledH2>A Spelling Game</StyledH2>
-            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_30)}>Classic 30</StyledButton>
-            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_10000)}>Top ten thousand words</StyledButton>
-            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.SPEED_UP)}>Speed Up</StyledButton>
+            {/*<StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_30)}>Classic 30</StyledButton>*/}
+            {/*<StyledButton onClick={() => switchPage(Page.PLAY, GameType.CLASSIC_10000)}>Top ten thousand words</StyledButton>*/}
+            <StyledButton onClick={() => switchPage(Page.PLAY, GameType.SPEED_UP)}>Play the Game</StyledButton>
             {/*<StyledButton onClick={() => dispatch(switchPage('playWordSprint'))}>Two min sprint</StyledButton>*/}
             {/*<StyledButton onClick={() => dispatch(switchPage('playSpeedUp'))}>Speed Up</StyledButton>*/}
+            <StyledInfoLine>(Based on the top 10,000 words in the English language)</StyledInfoLine>
         </StyledMenuPage>
     );
 }

@@ -9,7 +9,7 @@ const StyledResults = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: 48px;
+  font-size: 32px;
   color: white;`;
 
 const StyledHiScoresTable = styled.table`
@@ -63,7 +63,8 @@ const Results = () => {
                 <span>You scored {score}{gameType !== GameType.SPEED_UP ? `/${wordCount}` : ''} in {formattedTime} seconds!</span>
                 <StyledTryAgainButton onClick={() => switchPage(Page.PLAY, gameType)}>TRY AGAIN</StyledTryAgainButton>
                 <>
-                    <p>Hi scores for {gameType}</p>
+                    {/*<p>Hi scores for {gameType}</p>*/}
+                    <p>Hi scores:</p>
                     <StyledHiScoresTable>
                         <thead>
                             <tr>

@@ -37,7 +37,7 @@ const CorrectAnswer = () => {
 
     return (
         <Overlay className="correct-answer">
-            <Wrong>"{word.attemptedWord}" was WRONG!</Wrong>
+            <Wrong>{word.attemptedWord.length === word.inputWord.length ? `"${word.attemptedWord}" was ` : ''}WRONG!</Wrong>
             <Correction>{word.inputWord}</Correction>
         </Overlay>
     );
