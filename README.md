@@ -16,7 +16,9 @@ To start the development server, run:
 $ npm run start
 ```
 
-## Netlify Deployment
+## Deployment Status
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8704c0c5-eff1-433f-af14-92b9b593202c/deploy-status)](https://app.netlify.com/sites/classy-snickerdoodle-543b1b/deploys)
+
 Deployed to https://master--classy-snickerdoodle-543b1b.netlify.app/
 
 # Build Configuration
